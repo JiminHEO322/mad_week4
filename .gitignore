@@ -1,2 +1,7 @@
 .env
+
 Lib/site-packages
+Include
+Scripts
+share
+pyvenv.cfg
