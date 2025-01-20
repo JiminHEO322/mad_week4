@@ -34,7 +34,11 @@ def generate_diary(user_id: str, text: str):
     print(f"Detected mood: {mood}")
     keyword = keyword_extraction(translated_text)
     print(f"Detected keyword: {keyword}")
-    prompt = f"vinyl record cover in a {mood} style, featuring {keyword}"
+
+    if mood == "unknown":
+        prompt = f"vinyl record cover featuring {keyword}"
+    else:
+        prompt = f"vinyl record cover in a {mood} style, featuring {keyword}"
     
     # Hugging Face 이미지 생성
     image = generate_image(prompt)
@@ -56,7 +60,11 @@ def generate_diary(user_id: str, text: str):
         print("Image generation failed.")
     
     # Spotify 추천 음악 가져오기
-    recommended_songs = recommend_song(mood)
+    if mood == "unknown":
+        recommended_songs = recommend_song(keyword)
+    else:
+        recommended_songs = recommend_song(mood)
+        
     print(f"Recommended songs: {recommended_songs}")
 
     # MongoDB에 저장할 데이터
