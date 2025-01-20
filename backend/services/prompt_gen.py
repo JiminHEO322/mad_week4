@@ -22,7 +22,6 @@ def mood_extraction(message: str):
     payload = {"inputs": message}
     response = requests.post(API_URL, headers=headers, json=payload)
     
-    # 응답 데이터 디버깅용 출력
     print("API Response:", response.text)
 
     try:

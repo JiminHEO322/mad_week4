@@ -9,7 +9,7 @@ router = APIRouter()
 
 
 @router.post("/user")
-def save_diary(user_name: str):
+def add_user(user_name: str):
     user = User(
         user_name=user_name,
         created_at=datetime.utcnow()
