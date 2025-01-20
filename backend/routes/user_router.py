@@ -8,7 +8,7 @@ from bson import ObjectId
 router = APIRouter() 
 
 
-@router.post("/user/")
+@router.post("/user")
 def save_diary(user_name: str):
     user = User(
         user_name=user_name,
