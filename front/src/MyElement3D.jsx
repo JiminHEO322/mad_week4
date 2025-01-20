@@ -2,20 +2,24 @@ import { OrbitControls, useHelper, useGLTF, Environment, useAnimations } from "@
 import { useFrame, useThree } from "@react-three/fiber"
 import { useControls } from "leva"
 import { useEffect, useRef, useState } from "react"
+import { EffectComposer, Bloom } from '@react-three/postprocessing'
 import * as THREE from "three"
 
 
-function MyElement3D({ isAnimating }){
+function MyElement3D({ isAnimating, onRecordClick  }){
+    const [isHovered, setIsHovered] = useState(false)
     const light1 = useRef()
     const light2 = useRef()
     const spotlight = useRef()
     const turntableRef = useRef()
 
-    const model = useGLTF("./models/turntable2.glb")
+    const model = useGLTF("./models/turntable.glb")
     const animations = useAnimations(model.animations, model.scene)
     const { actionName } = { actionName: animations.names[0] }
 
     const { scene, gl } = useThree()
+
+    
 
     // 그림자 활성화
     useEffect(() => {
@@ -119,7 +123,15 @@ function MyElement3D({ isAnimating }){
                 name="turntable"
                 rotation-y={-90*Math.PI/180}
                 position={[0, -8, 0]}
+                onClick={onRecordClick}
+                onPointerOver={() => setIsHovered(true)}
+                onPointerOut={() => setIsHovered(false)}
             />
+            {/* {isHovered && (
+                <EffectComposer>
+                <Bloom intensity={1} luminanceThreshold={0} luminanceSmoothing={0.9} />
+                </EffectComposer>
+            )} */}
 
 
         </>
