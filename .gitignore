@@ -1,11 +1,7 @@
 .env
-<<<<<<< HEAD
 
 Lib/site-packages
 Include
 Scripts
 share
 pyvenv.cfg
-=======
-Lib/site-packages
->>>>>>> 025d0267 (FEAT: BE basic)
