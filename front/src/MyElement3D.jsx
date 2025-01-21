@@ -1,13 +1,12 @@
 import { OrbitControls, useHelper, useGLTF, Environment, useAnimations } from "@react-three/drei"
 import { useFrame, useThree } from "@react-three/fiber"
 import { useEffect, useRef, useState } from "react"
-import { EffectComposer, Bloom } from '@react-three/postprocessing'
+import { EffectComposer, Bloom, Outline } from '@react-three/postprocessing'
 import * as THREE from "three"
 
 
 function MyElement3D({ isAnimating, onRecordClick, onCatClick, onTableClick, onStartClick, 
     onf1Click, onf2Click, onf3Click, onf4Click, isLoggedIn, selectedLP  }){
-    const [isHovered, setIsHovered] = useState(null)
     const light1 = useRef()
     const light2 = useRef()
     const spotlight = useRef()
@@ -210,20 +209,22 @@ function MyElement3D({ isAnimating, onRecordClick, onCatClick, onTableClick, onS
 
         // 씬 내의 모든 객체와 교차하는지 확인
         const intersects = raycaster.intersectObjects(scene.children, true)
-
         if (intersects.length > 0) {
             const target = intersects[0].object
             if(target.name === "blackcat" || target.name === "\byellowcat"){
                 target.position.y = 2.0520457029342651
             } else if (target.name === "LP_1"){
                 target.scale.set(1.1, 1.1, 1.1)
+                // target.material.opacity = 0.7 
+                // target.material.transparent = true 
             } else if (target.name === 'Table'){
-                target.material.opacity=0.5
-                target.material.transparent = true
+                //target.scale.set(1.48578418, 0.12474172, 1.03498059)
+                target.material.opacity = 0.7 
+                target.material.transparent = true 
             } else if (target.name === 'F1'|| target.name === 'F2'|| target.name === 'F3'|| target.name === 'F4'){
                 target.material.emissive.set(0xF6C2DC)
             } else if(target.name === '\bF5'){[
-                target.material.emissive.set(0xFC95B4)
+                target.material.emissive.set(0xFEAEC6)
             ]}
         }
     }
@@ -234,9 +235,12 @@ function MyElement3D({ isAnimating, onRecordClick, onCatClick, onTableClick, onS
                     child.position.y = 1.0520457029342651
                 } else if(child.name === "LP_1"){
                     child.scale.set(1, 1, 1)
+                    // child.material.opacity = 1
+                    // child.material.transparent = false
                 } else if(child.name === 'Table'){
-                    child.material.opacity=1
-                    child.material.transparent=false
+                    //child.scale.set(1.3507128953933716, 0.11340156197547913, 0.940891444683075)
+                    child.material.opacity = 1
+                    child.material.transparent = false
                 } else if (child.name === '\bF5'|| child.name === 'F1'|| child.name === 'F2'|| child.name === 'F3'|| child.name === 'F4'){
                     child.material.emissive.set(0x000000)
                 }

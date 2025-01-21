@@ -1,4 +1,11 @@
 /* 모달 전체 배경 */
+@font-face {
+  font-family: 'Ownglyph';
+  src: url('./fonts/Ownglyph.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
 .modal-overlay {
     position: fixed;
     top: 0;
@@ -13,11 +20,29 @@
   
   /* 모달 박스 스타일 */
   .modal-content {
-    background: #fff;
+    font-family: 'Ownglyph';
+    background: rgba(255, 255, 255, 0.8);
     padding: 20px;
-    width: 400px;
+    width: 500px;
+    height: 330px;
     border-radius: 10px;
     text-align: center;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+
+  .modal-content h2 {
+    font-size: 32px;
+  }
+
+  textarea {
+    background: rgba(255, 255, 255, 0.8);
+  }
+
+  textarea::placeholder {
+    font-family: 'Ownglyph';
+    font-size: 20px;                 
+    color: #aaa;                   
+    font-style: italic;             
   }
   
   /* 버튼 스타일 */
@@ -28,6 +53,8 @@
   }
   
   .save-btn {
+    font-family: 'Ownglyph';
+    font-size: 16px;
     padding: 10px 20px;
     background: #28a745;
     color: white;
@@ -37,6 +64,8 @@
   }
   
   .close-btn {
+    font-family: 'Ownglyph';
+    font-size: 16px;
     padding: 10px 20px;
     background: #dc3545;
     color: white;

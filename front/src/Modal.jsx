@@ -9,19 +9,19 @@ const Modal = ({ isOpen, onClose, onSave }) => {
   return (
     <div className="modal-overlay">
       <div className="modal-content">
-        <h2>일기 작성</h2>
+        <h2>♤ 오늘의 LP 만들기 £</h2>
         <textarea
-          placeholder="오늘의 일기를 작성하세요..."
+          placeholder="레코드판에 담아 기록할 오늘 하루를 적어주세요:)"
           rows="10"
           style={{ width: '80%', padding: '10px', resize: 'none' }}
           value={text}
           onChange={(e) => setText(e.target.value)}
         />
         <div className="modal-actions">
+        <button onClick={onClose} className="close-btn">취소 †</button>
           <button onClick={() => onSave(text)} className="save-btn">
-            Generate LP
+            LP 생성하기 ¢
           </button>
-          <button onClick={onClose} className="close-btn">Close</button>
         </div>
       </div>
     </div>
