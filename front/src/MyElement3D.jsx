@@ -13,7 +13,7 @@ function MyElement3D({ isAnimating, onRecordClick, onCatClick, isLoggedIn }){
     const turntableRef = useRef()
 
     const { scene, gl, camera } = useThree()
-    const model = useGLTF("./models/turntable5.glb")
+    const model = useGLTF("./models/turntable1.glb")
     //const blackCat = useGLTF("./models/blackcat.glb")
     //const yellowCat = useGLTF("./models/yellowcat.glb")
     const animations = useAnimations(model.animations, model.scene)
@@ -135,17 +135,48 @@ function MyElement3D({ isAnimating, onRecordClick, onCatClick, isLoggedIn }){
         }
     }
 
+    const handlePointerMove = (event) => {
+        // Raycaster 업데이트
+        const raycaster = new THREE.Raycaster()
+        const pointer = new THREE.Vector2(
+            (event.clientX / window.innerWidth) * 2 - 1,
+            -(event.clientY / window.innerHeight) * 2 + 1
+        )
 
-    useEffect(() => {
-        console.log("--Model loaded:", model)
-        console.log("--Scene children:", model.scene.children)
-    }, [model])
+        raycaster.setFromCamera(pointer, camera) // 카메라를 기준으로 Ray 생성
+
+        // 씬 내의 모든 객체와 교차하는지 확인
+        const intersects = raycaster.intersectObjects(scene.children, true)
+
+        if (intersects.length > 0) {
+            const target = intersects[0].object
+            if(target.name === "blackcat" || target.name === "\byellowcat"){
+                target.position.y = 2.0520457029342651
+            } else if (target.name === "LP_1"){
+                target.scale.set(1.1, 1.1, 1.1)
+            }
+        }
+    }
+    const handlePointerOut = () => {
+        scene.traverse((child) => {
+            if (child.isMesh) {
+                if(child.name === "blackcat" || child.name === "\byellowcat"){
+                    child.position.y = 1.0520457029342651
+                } else if(child.name === "LP_1"){
+                    child.scale.set(1, 1, 1)
+                }
+            }
+        })
+    }
 
 
 
-    //useHelper(light1, THREE.SpotLightHelper)
-    //useHelper(light2, THREE.SpotLightHelper)
-    //useHelper(spotlight, THREE.SpotLightHelper)
+
+
+
+    // useHelper(light1, THREE.SpotLightHelper)
+    // useHelper(light2, THREE.SpotLightHelper)
+    // useHelper(spotlight, THREE.SpotLightHelper)
 
     return(
         <>
@@ -158,8 +189,8 @@ function MyElement3D({ isAnimating, onRecordClick, onCatClick, isLoggedIn }){
             <spotLight
                 castShadow
                 ref={light1}
-                color={0xffffff} intensity={5}
-                position={[0, 40, -15]}
+                color={0xffffff} intensity={3}
+                position={[0, 30, -15]}
                 angle={THREE.MathUtils.degToRad(40)}
                 penumbra={0.2}
                 shadow-mapSize-width={1024}
@@ -169,8 +200,8 @@ function MyElement3D({ isAnimating, onRecordClick, onCatClick, isLoggedIn }){
             <spotLight
                 castShadow
                 ref={light2}
-                color={0xffffff} intensity={5}
-                position={[0, 40, 15]}
+                color={0xffffff} intensity={3}
+                position={[0, 30, 15]}
                 angle={THREE.MathUtils.degToRad(40)}
                 penumbra={0.2}
                 shadow-mapSize-width={1024}
@@ -180,15 +211,15 @@ function MyElement3D({ isAnimating, onRecordClick, onCatClick, isLoggedIn }){
             <spotLight
                 castShadow
                 ref={spotlight}
-                color={0xffe4b5} intensity={8}
-                position={[0, 30, 0]}
+                color={0xffffff} intensity={5}
+                position={[10, 30, 0]}
                 angle={THREE.MathUtils.degToRad(30)}
                 penumbra={0.5}
                 shadow-mapSize-width={2048}
                 shadow-mapSize-height={2048}
             />  
 
-            <Environment files={"./images/rosendal_plains_2_4k.hdr"} />
+            <Environment color={0xffffff} intensity={0.3} files={"./images/rosendal_plains_2_4k.hdr"} />
 
             <primitive 
                 castShadow
@@ -197,17 +228,11 @@ function MyElement3D({ isAnimating, onRecordClick, onCatClick, isLoggedIn }){
                 object={model.scene} 
                 name="turntable"
                 rotation-y={-90*Math.PI/180}
-                position={[0, -8, 0]}
-                //onPointerOver={(event) => setIsHovered(event.object.name)} // Hover 상태 저장
-                //onPointerOut={() => setIsHovered(null)} // Hover 상태 초기화
+                position={[10, -8, 0]}
                 onPointerDown={(e) => handlePointerDown(e.nativeEvent)} // 클릭 이벤트 처리
+                onPointerMove={handlePointerMove}
+                onPointerOut={handlePointerOut}
             />
-            {/* Hover 효과 표시
-            {isHovered && (
-                <div style={{ position: "absolute", color: "white", background: "black", padding: "5px", borderRadius: "5px" }}>
-                Hovering over: {isHovered}
-                </div>
-            )} */}
 
 
 
