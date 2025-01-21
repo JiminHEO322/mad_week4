@@ -12,7 +12,7 @@ app.include_router(routes.lp_router.router, prefix="/lps", tags=["LPs"])
 # CORS 설정
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # 모든 도메인 허용. 보안이 중요하다면 특정 도메인으로 제한.
+    allow_origins=["http://localhost:5173"],  # 모든 도메인 허용. 보안이 중요하다면 특정 도메인으로 제한.
     allow_credentials=True,  # 쿠키를 포함한 자격 증명 허용
     allow_methods=["*"],  # 모든 HTTP 메서드 허용 (GET, POST, PUT 등)
     allow_headers=["*"],  # 모든 헤더 허용

@@ -3,7 +3,9 @@ from datetime import datetime
 from typing import Optional, List
 
 class User(BaseModel):
+    user_id: Optional[str] = None
     user_name: str
+    email: str
     created_at: datetime = Field(default_factory=datetime.utcnow)
 
 class Song(BaseModel):
