@@ -1,6 +1,6 @@
 from pydantic import BaseModel, Field, HttpUrl
 from datetime import datetime
-from typing import Optional
+from typing import Optional, List
 
 class User(BaseModel):
     user_name: str
@@ -15,4 +15,4 @@ class LP(BaseModel):
     text: str
     created_at: datetime = Field(default_factory=datetime.utcnow)
     image: Optional[str]
-    song: Optional[Song] = None
+    song: List[Song] = []
