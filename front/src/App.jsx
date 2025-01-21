@@ -165,7 +165,7 @@ function AppContent() {
       ) : (
         <>
           <Canvas camera={{ near: 0.1, far: 100, position: [-50, 15, 0] }}>
-            <MyElement3D isAnimating={isAnimating} onRecordClick={handleRecordClick} onCatClick={handleCatClick} isLoggedIn={isLoggedIn}/>
+            <MyElement3D isAnimating={isAnimating} onRecordClick={handleRecordClick} onCatClick={handleCatClick} isLoggedIn={isLoggedIn} selectedLP={selectedLP}/>
           </Canvas>
           <div className="control-button" onClick={handleInteraction}>
             {isAnimating ? 'Stop Music' : 'Start Music'}
@@ -177,15 +177,11 @@ function AppContent() {
 
           <Modal isOpen={showModal} onClose={() => setShowModal(false)} onSave={(diaryText) => handleSaveDiary(diaryText)} />
 
-          <button className="fetch-lp-button" onClick={() => navigate('/lp-records')}>
-            내 LP 보기
-          </button>
-
-          {selectedLP ? (
+          {/* {selectedLP ? (
             <img className="selected-lp" src={`data:image/png;base64,${selectedLP.image}`} alt="Selected LP Cover" />
           ) : (
             <p style={{ color: 'white' }}>LP를 선택해주세요</p>
-          )}
+          )} */}
         </>
       )}
     </>

@@ -5,17 +5,16 @@ import { EffectComposer, Bloom } from '@react-three/postprocessing'
 import * as THREE from "three"
 
 
-function MyElement3D({ isAnimating, onRecordClick, onCatClick, isLoggedIn }){
+function MyElement3D({ isAnimating, onRecordClick, onCatClick, isLoggedIn, selectedLP  }){
     const [isHovered, setIsHovered] = useState(null)
     const light1 = useRef()
     const light2 = useRef()
     const spotlight = useRef()
     const turntableRef = useRef()
+    const lpCoverRef = useRef()
 
     const { scene, gl, camera } = useThree()
-    const model = useGLTF("./models/turntable1.glb")
-    //const blackCat = useGLTF("./models/blackcat.glb")
-    //const yellowCat = useGLTF("./models/yellowcat.glb")
+    const model = useGLTF("./models/turntable.glb")
     const animations = useAnimations(model.animations, model.scene)
     const { actionName } = { actionName: animations.names[0] }
 
@@ -37,6 +36,26 @@ function MyElement3D({ isAnimating, onRecordClick, onCatClick, isLoggedIn }){
         ])
         scene.background = texture
     }, [scene])
+
+    // LP 표지 
+    useEffect(() => {
+        if (selectedLP && selectedLP.image) {
+            const texture = new THREE.TextureLoader().load(`data:image/png;base64,${selectedLP.image}`);
+            // if (lpCoverRef.current) {
+            //     lpCoverRef.current.material.map = texture;
+            //     lpCoverRef.current.material.needsUpdate = true;  // 텍스처 갱신
+            // }
+
+            // LP 이름을 가진 객체 찾기
+            const lpObject = model.scene.getObjectByName("LpImage");
+            console.log("LpImage 찾음" + lpObject)
+
+            if (lpObject) {
+                lpObject.material.map = texture;  // LP판의 텍스처로 표지 이미지 설정
+                lpObject.material.needsUpdate = true; // 텍스처 갱신
+            }
+        }
+    }, [selectedLP])
 
     //로그인 여부에 따라서 고양이 교체
     useEffect(() => {
@@ -98,7 +117,7 @@ function MyElement3D({ isAnimating, onRecordClick, onCatClick, isLoggedIn }){
             // 전체 씬에서 상호작용 설정
             scene.traverse((child) => {
                 if (child.isMesh) {
-                    console.log("Mesh found:", child.name) // 모든 메쉬 이름 출력
+                    //console.log("Mesh found:", child.name) // 모든 메쉬 이름 출력
                 }
                 if (child.isMesh && child.userData.isInteractive) {
                 child.onClick = child.userData.onClick;
@@ -171,9 +190,6 @@ function MyElement3D({ isAnimating, onRecordClick, onCatClick, isLoggedIn }){
 
 
 
-
-
-
     // useHelper(light1, THREE.SpotLightHelper)
     // useHelper(light2, THREE.SpotLightHelper)
     // useHelper(spotlight, THREE.SpotLightHelper)
@@ -227,12 +243,19 @@ function MyElement3D({ isAnimating, onRecordClick, onCatClick, isLoggedIn }){
                 scale={12}
                 object={model.scene} 
                 name="turntable"
-                rotation-y={-90*Math.PI/180}
+                rotation-y={-89*Math.PI/180}
                 position={[10, -8, 0]}
                 onPointerDown={(e) => handlePointerDown(e.nativeEvent)} // 클릭 이벤트 처리
                 onPointerMove={handlePointerMove}
                 onPointerOut={handlePointerOut}
             />
+
+            {selectedLP && selectedLP.image && (
+                <mesh ref={lpCoverRef} position={[30, 3, 0]} rotation-y={-90 * Math.PI / 180}>
+                    <planeGeometry args={[20, 20]} />
+                    <meshStandardMaterial map={new THREE.TextureLoader().load(`data:image/png;base64,${selectedLP.image}`)} />
+                </mesh>
+            )}
 
 
 
