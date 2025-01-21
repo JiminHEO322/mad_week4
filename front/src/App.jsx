@@ -9,7 +9,8 @@ import LpSelection from './LpSelection';
 import Modal from './Modal';
 import LPRecordsPage from './LPRecordsPage';
 
-const CLIENT_ID = "325452960914-43dnfemshc5ukosjkj999ou9ldbcu328.apps.googleusercontent.com";
+const CLIENT_ID = import.meta.env.VITE_YW_GOOGLE_CLIENT_ID;
+console.log('Client ID:', CLIENT_ID);
 
 function App() {
   return (
@@ -105,7 +106,7 @@ function AppContent() {
 
       setSelectedLP(response.data);
       localStorage.setItem('selectedLP', JSON.stringify(response.data));
-      
+
       alert("LP 커버가 성공적으로 생성되었습니다!");
       setShowModal(false);
     } catch (error) {
