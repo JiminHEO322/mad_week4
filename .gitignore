@@ -42,6 +42,7 @@ backend/venv/
 .git-rewrite/t/backend/main.py
 .git-rewrite/t/backend/models.py
 .git-rewrite/t/backend/requirements.txt
+backend/__pycache__
 .git-rewrite/t/backend/__pycache__/database.cpython-39.pyc
 .git-rewrite/t/backend/__pycache__/database.cpython-310.pyc
 .git-rewrite/t/backend/__pycache__/diary_schema.cpython-39.pyc
