@@ -21,3 +21,9 @@ app.add_middleware(
 @app.get("/")
 async def read_root():
     return {"message": "MongoDB 튜토리얼 FastAPI에 오신 것을 환영합니다!"}
+
+@app.middleware("http")
+async def add_security_headers(request, call_next):
+    response = await call_next(request)
+    response.headers["Cross-Origin-Opener-Policy"] = "same-origin-allow-popups"
+    return response

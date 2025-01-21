@@ -5,6 +5,7 @@ from fastapi import APIRouter, HTTPException
 from fastapi.responses import JSONResponse
 from database import diary_collection
 from models import LP, Song
+from diary_schema import DiaryRequest
 
 from services.image_gen import generate_image
 from services.song_gen import recommend_song
@@ -13,6 +14,15 @@ from services.prompt_gen import english_translation, mood_extraction, keyword_ex
 from bson import ObjectId
 
 router = APIRouter() 
+
+
+@router.get("/")
+def get_diaries(user_id: str):
+    '''유저의 모든 LP 조회'''
+    diaries = list(diary_collection.find({"user_id": user_id}, {"_id": 0}))
+    if not diaries:
+        return []
+    return diaries
 
 
 @router.get("/diary")
@@ -26,9 +36,9 @@ def get_diary(user_id: str, diary_id: str):
 
 
 @router.post("/generate")
-def generate_diary(user_id: str, text: str):
+def generate_diary(request: DiaryRequest):
     '''LP 커버 생성 및 노래 추천'''
-    translated_text = english_translation(text)
+    translated_text = english_translation(request.text)
     print(f"Translated text: {translated_text}")
     mood = mood_extraction(translated_text)
     print(f"Detected mood: {mood}")
@@ -59,7 +69,6 @@ def generate_diary(user_id: str, text: str):
     else:
         print("Image generation failed.")
     
-    # Spotify 추천 음악 가져오기
     if mood == "unknown":
         recommended_songs = recommend_song(keyword)
     else:
@@ -67,12 +76,18 @@ def generate_diary(user_id: str, text: str):
         
     print(f"Recommended songs: {recommended_songs}")
 
+    if not recommended_songs:
+        song_list = [Song(title="No Title", artist="Unknown")]
+    else:
+        song_list = [Song(title=title, artist=artist) for title, artist in recommended_songs.items()]
+
     # MongoDB에 저장할 데이터
     diary = LP(
-        user_id=user_id,
-        text=text,
+        user_id=request.user_id,
+        text=request.text,
         created_at=datetime.utcnow(),
-        image=base64_image
+        image=base64_image,
+        song=song_list
     )
     
     # MongoDB 저장
@@ -80,6 +95,7 @@ def generate_diary(user_id: str, text: str):
     return {"id": str(result.inserted_id),
             "image": base64_image,
             "song": recommended_songs}
+
 
 @router.post("/select-song")
 def select_song(user_id: str, diary_id: str, song: Song):
