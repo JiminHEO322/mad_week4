@@ -5,7 +5,7 @@ import { EffectComposer, Bloom } from '@react-three/postprocessing'
 import * as THREE from "three"
 
 
-function MyElement3D({ isAnimating, onRecordClick, onCatClick }){
+function MyElement3D({ isAnimating, onRecordClick, onCatClick, isLoggedIn }){
     const [isHovered, setIsHovered] = useState(null)
     const light1 = useRef()
     const light2 = useRef()
@@ -13,10 +13,11 @@ function MyElement3D({ isAnimating, onRecordClick, onCatClick }){
     const turntableRef = useRef()
 
     const { scene, gl, camera } = useThree()
-    const model = useGLTF("./models/turntable.glb")
+    const model = useGLTF("./models/turntable5.glb")
+    //const blackCat = useGLTF("./models/blackcat.glb")
+    //const yellowCat = useGLTF("./models/yellowcat.glb")
     const animations = useAnimations(model.animations, model.scene)
     const { actionName } = { actionName: animations.names[0] }
-
 
     // 그림자 활성화
     useEffect(() => {
@@ -37,6 +38,23 @@ function MyElement3D({ isAnimating, onRecordClick, onCatClick }){
         scene.background = texture
     }, [scene])
 
+    //로그인 여부에 따라서 고양이 교체
+    useEffect(() => {
+        if (model && model.scene) {
+            const yellowCat = model.scene.getObjectByName("\byellowcat")
+            const blackCat = model.scene.getObjectByName("blackcat")
+
+            if(isLoggedIn){
+                blackCat.visible = false
+                yellowCat.visible = true
+            } else {
+                blackCat.visible = true
+                yellowCat.visible = false
+            }
+        }
+
+    }, [isLoggedIn, model.scene, scene])
+
     // 애니메이션 컨트롤
     useEffect(() => {
         const action = animations.actions[actionName]
@@ -56,8 +74,6 @@ function MyElement3D({ isAnimating, onRecordClick, onCatClick }){
     // LP & cat 객체 찾기 및 클릭 처리
     useEffect(() => {
         if (model && model.scene) {
-            console.log("Model loaded:", model)
-            console.log("Scene children:", model.scene.children)
             let lpMesh = null
             let catMesh = null
 
@@ -68,7 +84,7 @@ function MyElement3D({ isAnimating, onRecordClick, onCatClick }){
                     lpMesh.userData.isInteractive = true
                     lpMesh.userData.onClick = onRecordClick
                 }
-                if (child.name === "\bcat") {
+                if (child.name === "blackcat") {
                     catMesh = child;
                     console.log("Found Cat Mesh:", catMesh);
                     catMesh.userData.isInteractive = true
@@ -92,9 +108,10 @@ function MyElement3D({ isAnimating, onRecordClick, onCatClick }){
     }, [model, scene, onRecordClick, onCatClick]);
 
 
+
     const handlePointerDown = (event) => {
         if (!camera || !camera.isPerspectiveCamera) {
-            console.error("Camera is not a valid PerspectiveCamera!");
+            console.error("Camera is not a valid PerspectiveCamera!")
             return;
         }
 
@@ -108,7 +125,7 @@ function MyElement3D({ isAnimating, onRecordClick, onCatClick }){
         const intersects = raycaster.intersectObjects(scene.children, true) // 씬의 모든 객체와 교차 감지
     
         if (intersects.length > 0) {
-            const target = intersects[0].object;
+            const target = intersects[0].object
     
             // 클릭 가능한 객체인지 확인
             if (target.userData.isInteractive && target.userData.onClick) {
@@ -191,6 +208,7 @@ function MyElement3D({ isAnimating, onRecordClick, onCatClick }){
                 Hovering over: {isHovered}
                 </div>
             )} */}
+
 
 
         </>
