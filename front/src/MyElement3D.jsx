@@ -122,7 +122,7 @@ function MyElement3D({ isAnimating, onRecordClick, onCatClick, onTableClick, onS
                     catMesh.userData.isInteractive = true
                     catMesh.userData.onClick = onCatClick
                 }
-                if (child.name === "Cube001") {
+                if (child.name === "\bF5") {
                     startMesh = child;
                     console.log("Found startMesh:", startMesh);
                     startMesh.userData.isInteractive = true
@@ -217,7 +217,14 @@ function MyElement3D({ isAnimating, onRecordClick, onCatClick, onTableClick, onS
                 target.position.y = 2.0520457029342651
             } else if (target.name === "LP_1"){
                 target.scale.set(1.1, 1.1, 1.1)
-            }
+            } else if (target.name === 'Table'){
+                target.material.opacity=0.5
+                target.material.transparent = true
+            } else if (target.name === 'F1'|| target.name === 'F2'|| target.name === 'F3'|| target.name === 'F4'){
+                target.material.emissive.set(0xF6C2DC)
+            } else if(target.name === '\bF5'){[
+                target.material.emissive.set(0xFC95B4)
+            ]}
         }
     }
     const handlePointerOut = () => {
@@ -227,6 +234,11 @@ function MyElement3D({ isAnimating, onRecordClick, onCatClick, onTableClick, onS
                     child.position.y = 1.0520457029342651
                 } else if(child.name === "LP_1"){
                     child.scale.set(1, 1, 1)
+                } else if(child.name === 'Table'){
+                    child.material.opacity=1
+                    child.material.transparent=false
+                } else if (child.name === '\bF5'|| child.name === 'F1'|| child.name === 'F2'|| child.name === 'F3'|| child.name === 'F4'){
+                    child.material.emissive.set(0x000000)
                 }
             }
         })
