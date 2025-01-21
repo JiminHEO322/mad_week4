@@ -21,6 +21,7 @@ function App() {
 }
 
 function AppContent() {
+  const [hoveredText, setHoveredText] = useState("");
   const [isAnimating, setIsAnimating] = useState(true);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [hasInteracted, setHasInteracted] = useState(false);
@@ -188,9 +189,13 @@ function AppContent() {
         <LpSelection onLpSelect={handleLpSelect} />
       ) : (
         <>
+          {hoveredText && (
+                <div className="hovered-text"> {hoveredText} </div>
+            )}
           <Canvas camera={{ near: 0.1, far: 100, position: [-50, 15, 0] }}>
             <MyElement3D isAnimating={isAnimating} onRecordClick={handleRecordClick} onCatClick={handleCatClick} onTableClick={handleTableClick} 
-              onStartClick={handleInteraction} onf1Click={handlef1Click} onf2Click={handlef2Click} onf3Click={handlef3Click} onf4Click={handlef4Click} isLoggedIn={isLoggedIn} selectedLP={selectedLP}/>
+              onStartClick={handleInteraction} onf1Click={handlef1Click} onf2Click={handlef2Click} onf3Click={handlef3Click} onf4Click={handlef4Click} 
+              isLoggedIn={isLoggedIn} selectedLP={selectedLP} setHoveredText={setHoveredText}/>
           </Canvas>
 
           {isLoading && ( 

@@ -6,7 +6,7 @@ import * as THREE from "three"
 
 
 function MyElement3D({ isAnimating, onRecordClick, onCatClick, onTableClick, onStartClick, 
-    onf1Click, onf2Click, onf3Click, onf4Click, isLoggedIn, selectedLP  }){
+    onf1Click, onf2Click, onf3Click, onf4Click, isLoggedIn, selectedLP, setHoveredText }){
     const light1 = useRef()
     const light2 = useRef()
     const spotlight = useRef()
@@ -211,21 +211,34 @@ function MyElement3D({ isAnimating, onRecordClick, onCatClick, onTableClick, onS
         const intersects = raycaster.intersectObjects(scene.children, true)
         if (intersects.length > 0) {
             const target = intersects[0].object
-            if(target.name === "blackcat" || target.name === "\byellowcat"){
+            if(target.name === "blackcat"){
+                setHoveredText("♧ 로그인 하기 ♧");
+                target.position.y = 2.0520457029342651
+            } else if (target.name === "\byellowcat") {
+                setHoveredText("♧ 로그아웃 하기 ♧");
                 target.position.y = 2.0520457029342651
             } else if (target.name === "LP_1"){
+                setHoveredText("£ LP 변경하기 £");
                 target.scale.set(1.1, 1.1, 1.1)
                 // target.material.opacity = 0.7 
                 // target.material.transparent = true 
             } else if (target.name === 'Table'){
+                setHoveredText("♤ 오늘의 LP 만들기 ♤");
                 //target.scale.set(1.48578418, 0.12474172, 1.03498059)
-                target.material.opacity = 0.7 
+                target.material.opacity = 0.5 
                 target.material.transparent = true 
+                //target.material.emissive.set(0xfaf2c6)
             } else if (target.name === 'F1'|| target.name === 'F2'|| target.name === 'F3'|| target.name === 'F4'){
+                setHoveredText("† 음악 볼륨 조절 †");
                 target.material.emissive.set(0xF6C2DC)
-            } else if(target.name === '\bF5'){[
+            } else if(target.name === '\bF5'){
+                setHoveredText("¢ 음악 재생하기/멈추기 ¢");
                 target.material.emissive.set(0xFEAEC6)
-            ]}
+            } else {
+                setHoveredText("")
+            }
+        } else {
+            setHoveredText("")
         }
     }
     const handlePointerOut = () => {
@@ -241,10 +254,13 @@ function MyElement3D({ isAnimating, onRecordClick, onCatClick, onTableClick, onS
                     //child.scale.set(1.3507128953933716, 0.11340156197547913, 0.940891444683075)
                     child.material.opacity = 1
                     child.material.transparent = false
+                    //child.material.emissive.set(0x000000)
                 } else if (child.name === '\bF5'|| child.name === 'F1'|| child.name === 'F2'|| child.name === 'F3'|| child.name === 'F4'){
                     child.material.emissive.set(0x000000)
+                   
                 }
             }
+            setHoveredText("")
         })
     }
 
@@ -256,6 +272,7 @@ function MyElement3D({ isAnimating, onRecordClick, onCatClick, onTableClick, onS
 
     return(
         <>
+
             <OrbitControls />
 
             {/* <axesHelper scale={40}/> */}
