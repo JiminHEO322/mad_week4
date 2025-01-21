@@ -25,14 +25,17 @@ function AppContent() {
   const [hasInteracted, setHasInteracted] = useState(false);
   const [showLpSelection, setShowLpSelection] = useState(false);
   const [showModal, setShowModal] = useState(false);
-  const [generatedImage, setGeneratedImage] = useState(null);
   const [userId, setUserId] = useState('user123');
   const [currentMusic, setCurrentMusic] = useState('./musics/backgroundmusic.mp3');
   const audioRef = useRef(null);
 
   const navigate = useNavigate();
   const location = useLocation();
-  const selectedLP = location.state?.selectedLP || null;
+  const [selectedLP, setSelectedLP] = useState(() => {
+    // 컴포넌트가 마운트될 때 로컬 스토리지에서 LP 불러오기
+    const savedLP = localStorage.getItem('selectedLP');
+    return savedLP ? JSON.parse(savedLP) : location.state?.selectedLP || null;
+  });
   console.log('(APP) Selected LP:', selectedLP);
 
   // 오디오 객체 생성 및 기본 설정
@@ -98,8 +101,11 @@ function AppContent() {
           'Content-Type': 'application/json',
         },
       });
+      console.log("Generated LP:", response);
 
-      setGeneratedImage(`data:image/png;base64,${response.data.image}`);
+      setSelectedLP(response.data);
+      localStorage.setItem('selectedLP', JSON.stringify(response.data));
+      
       alert("LP 커버가 성공적으로 생성되었습니다!");
       setShowModal(false);
     } catch (error) {

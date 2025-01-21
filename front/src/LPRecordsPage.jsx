@@ -33,14 +33,15 @@ const LPRecordsPage = () => {
   // LP 클릭 시 메인 페이지로 데이터 전달
   const handleSelectLP = (record) => {
     console.log('(LPRECORDS) Selected LP:', record);
+    localStorage.setItem('selectedLP', JSON.stringify(record));  // 저장
     navigate(`/`, { state: { selectedLP: record } });
   };
 
   return (
     <div style={{ textAlign: 'center', padding: '20px' }}>
-      {/* <button onClick={() => window.history.back()} className="back-button">
+      <button onClick={() => window.history.back()} className="back-button">
         돌아가기
-      </button> */}
+      </button>
       <h1 style={{color: 'white'}}>{userId}의 LP 기록</h1>
       <div className="lp-list">
         {lpRecords.length > 0 ? (
