@@ -26,6 +26,7 @@ function AppContent() {
   const [hasInteracted, setHasInteracted] = useState(false);
   const [showLpSelection, setShowLpSelection] = useState(false);
   const [showModal, setShowModal] = useState(false);
+  const [isLoading, setIsLoading] = useState(false)
   const [userId, setUserId] = useState('user123');
   const [currentMusic, setCurrentMusic] = useState('./musics/backgroundmusic.mp3');
   const audioRef = useRef(null);
@@ -93,6 +94,8 @@ function AppContent() {
       return;
     }
 
+    setIsLoading(true);
+
     try {
       const response = await axios.post('http://localhost:8000/lps/generate', {
         user_id: userId,
@@ -112,6 +115,8 @@ function AppContent() {
     } catch (error) {
       console.error("Error:", error);
       alert("LP 커버 생성에 실패했습니다.");
+    }finally {
+      setIsLoading(false); // 로딩 상태 종료
     }
   };
 
@@ -175,6 +180,8 @@ function AppContent() {
     }
   };
 
+  
+
   return (
     <>
       {showLpSelection ? (
@@ -186,8 +193,21 @@ function AppContent() {
               onStartClick={handleInteraction} onf1Click={handlef1Click} onf2Click={handlef2Click} onf3Click={handlef3Click} onf4Click={handlef4Click} isLoggedIn={isLoggedIn} selectedLP={selectedLP}/>
           </Canvas>
 
+          {isLoading && ( 
+            <div className="loading-overlay">
+              <div className="loading-content">
+                <p>“LP를 생성 중입니다! 잠시만 기다려주세요” ♤ ♧ † £ ¢</p>
+              </div>
+            </div>
+          )}
 
-          <Modal isOpen={showModal} onClose={() => setShowModal(false)} onSave={(diaryText) => handleSaveDiary(diaryText)} />
+          {!isLoading && (
+            <Modal
+              isOpen={showModal}
+              onClose={() => setShowModal(false)}
+              onSave={(diaryText) => handleSaveDiary(diaryText)}
+            />
+          )}
 
         </>
       )}
