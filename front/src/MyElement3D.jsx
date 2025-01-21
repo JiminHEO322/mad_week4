@@ -5,7 +5,8 @@ import { EffectComposer, Bloom } from '@react-three/postprocessing'
 import * as THREE from "three"
 
 
-function MyElement3D({ isAnimating, onRecordClick, onCatClick, isLoggedIn, selectedLP  }){
+function MyElement3D({ isAnimating, onRecordClick, onCatClick, onTableClick, onStartClick, 
+    onf1Click, onf2Click, onf3Click, onf4Click, isLoggedIn, selectedLP  }){
     const [isHovered, setIsHovered] = useState(null)
     const light1 = useRef()
     const light2 = useRef()
@@ -90,13 +91,25 @@ function MyElement3D({ isAnimating, onRecordClick, onCatClick, isLoggedIn, selec
     }, [isAnimating, actionName, animations.actions])
 
 
-    // LP & cat 객체 찾기 및 클릭 처리
+    // 턴테이블에서 객체 찾기 및 클릭 처리
     useEffect(() => {
         if (model && model.scene) {
+            let tableMesh = null
             let lpMesh = null
             let catMesh = null
+            let startMesh = null
+            let f1Mesh = null
+            let f2Mesh = null
+            let f3Mesh = null
+            let f4Mesh = null
 
             model.scene.traverse((child) => {
+                if (child.name === "Table") {
+                    tableMesh = child;
+                    console.log("Found tableMesh:", tableMesh);
+                    tableMesh.userData.isInteractive = true
+                    tableMesh.userData.onClick = onTableClick
+                }
                 if (child.name === "LP_1") {
                     lpMesh = child
                     console.log("Found LP Mesh:", lpMesh)
@@ -109,15 +122,46 @@ function MyElement3D({ isAnimating, onRecordClick, onCatClick, isLoggedIn, selec
                     catMesh.userData.isInteractive = true
                     catMesh.userData.onClick = onCatClick
                 }
+                if (child.name === "Cube001") {
+                    startMesh = child;
+                    console.log("Found startMesh:", startMesh);
+                    startMesh.userData.isInteractive = true
+                    startMesh.userData.onClick = onStartClick
+                }
+                if (child.name === "F1") {
+                    f1Mesh = child;
+                    console.log("Found f1Mesh:", f1Mesh);
+                    f1Mesh.userData.isInteractive = true
+                    f1Mesh.userData.onClick = onf1Click
+                }
+                if (child.name === "F2") {
+                    f2Mesh = child;
+                    console.log("Found f1Mesh:", f2Mesh);
+                    f2Mesh.userData.isInteractive = true
+                    f2Mesh.userData.onClick = onf2Click
+                }
+                if (child.name === "F3") {
+                    f3Mesh = child;
+                    console.log("Found f1Mesh:", f3Mesh);
+                    f3Mesh.userData.isInteractive = true
+                    f3Mesh.userData.onClick = onf3Click
+                }
+                if (child.name === "F4") {
+                    f4Mesh = child;
+                    console.log("Found f1Mesh:", f4Mesh);
+                    f4Mesh.userData.isInteractive = true
+                    f4Mesh.userData.onClick = onf4Click
+                }
             })
     
+            if (!tableMesh) console.warn("Table Mesh not found!")
             if (!lpMesh) console.warn("LP Mesh not found!")
             if (!catMesh) console.warn("Cat Mesh not found!")
 
             // 전체 씬에서 상호작용 설정
             scene.traverse((child) => {
                 if (child.isMesh) {
-                    //console.log("Mesh found:", child.name) // 모든 메쉬 이름 출력
+                    console.log("Mesh found:", child.name) // 모든 메쉬 이름 출력
                 }
                 if (child.isMesh && child.userData.isInteractive) {
                 child.onClick = child.userData.onClick;

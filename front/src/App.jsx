@@ -146,7 +146,23 @@ function AppContent() {
   });
 
   const handleRecordClick = () => {
-    navigate('/lp-records'); // LP판 클릭 시 /lp-records로 이동
+    navigate('/lp-records'); 
+  };
+
+  const handleTableClick = () => {
+    setShowModal(true)
+  };
+  const handlef1Click = () => {
+    audioRef.current.volume = 0.1;
+  };
+  const handlef2Click = () => {
+    audioRef.current.volume = 0.4;
+  };
+  const handlef3Click = () => {
+    audioRef.current.volume = 0.7;
+  };
+  const handlef4Click = () => {
+    audioRef.current.volume = 1;
   };
 
   const handleCatClick = () => {
@@ -166,23 +182,13 @@ function AppContent() {
       ) : (
         <>
           <Canvas camera={{ near: 0.1, far: 100, position: [-50, 15, 0] }}>
-            <MyElement3D isAnimating={isAnimating} onRecordClick={handleRecordClick} onCatClick={handleCatClick} isLoggedIn={isLoggedIn} selectedLP={selectedLP}/>
+            <MyElement3D isAnimating={isAnimating} onRecordClick={handleRecordClick} onCatClick={handleCatClick} onTableClick={handleTableClick} 
+              onStartClick={handleInteraction} onf1Click={handlef1Click} onf2Click={handlef2Click} onf3Click={handlef3Click} onf4Click={handlef4Click} isLoggedIn={isLoggedIn} selectedLP={selectedLP}/>
           </Canvas>
-          <div className="control-button" onClick={handleInteraction}>
-            {isAnimating ? 'Stop Music' : 'Start Music'}
-          </div>
 
-          <div style={{ marginTop: '20px', textAlign: 'center' }} className="diary-button" onClick={() => setShowModal(true)}>
-            Write Diary
-          </div>
 
           <Modal isOpen={showModal} onClose={() => setShowModal(false)} onSave={(diaryText) => handleSaveDiary(diaryText)} />
 
-          {/* {selectedLP ? (
-            <img className="selected-lp" src={`data:image/png;base64,${selectedLP.image}`} alt="Selected LP Cover" />
-          ) : (
-            <p style={{ color: 'white' }}>LP를 선택해주세요</p>
-          )} */}
         </>
       )}
     </>
