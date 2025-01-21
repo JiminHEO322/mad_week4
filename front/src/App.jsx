@@ -138,6 +138,10 @@ function AppContent() {
     },
   });
 
+  const handleRecordClick = () => {
+    navigate('/lp-records'); // LP판 클릭 시 /lp-records로 이동
+  };
+
   const handleCatClick = () => {
     if (isLoggedIn) {
       setIsLoggedIn(false); // 로그아웃 처리
@@ -155,7 +159,7 @@ function AppContent() {
       ) : (
         <>
           <Canvas camera={{ near: 0.1, far: 100, position: [-50, 15, 0] }}>
-            <MyElement3D isAnimating={isAnimating} onRecordClick={() => setShowLpSelection(true)} onCatClick={handleCatClick} isLoggedIn={isLoggedIn}/>
+            <MyElement3D isAnimating={isAnimating} onRecordClick={handleRecordClick} onCatClick={handleCatClick} isLoggedIn={isLoggedIn}/>
           </Canvas>
           <div className="control-button" onClick={handleInteraction}>
             {isAnimating ? 'Stop Music' : 'Start Music'}
