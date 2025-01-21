@@ -56,7 +56,7 @@ def generate_diary(request: DiaryRequest):
         # 이미지 저장 경로 설정
         save_dir = "images"
         os.makedirs(save_dir, exist_ok=True)  # 디렉토리 없으면 생성
-        file_path = os.path.join(save_dir, f"{keyword}.png")
+        file_path = os.path.join(save_dir, f"{keyword}_{mood}.png")
         
         # Base64로 변환
         base64_image = base64.b64encode(image).decode("utf-8")
@@ -92,9 +92,7 @@ def generate_diary(request: DiaryRequest):
     
     # MongoDB 저장
     result = diary_collection.insert_one(diary.dict())
-    return {"id": str(result.inserted_id),
-            "image": base64_image,
-            "song": recommended_songs}
+    return diary
 
 
 @router.post("/select-song")
