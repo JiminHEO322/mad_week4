@@ -21,6 +21,7 @@ function App() {
 
 function AppContent() {
   const [isAnimating, setIsAnimating] = useState(true);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [hasInteracted, setHasInteracted] = useState(false);
   const [showLpSelection, setShowLpSelection] = useState(false);
   const [showModal, setShowModal] = useState(false);
@@ -154,7 +155,7 @@ function AppContent() {
       ) : (
         <>
           <Canvas camera={{ near: 0.1, far: 100, position: [-50, 15, 0] }}>
-            <MyElement3D isAnimating={isAnimating} onRecordClick={() => setShowLpSelection(true)} />
+            <MyElement3D isAnimating={isAnimating} onRecordClick={() => setShowLpSelection(true)} onCatClick={handleCatClick} isLoggedIn={isLoggedIn}/>
           </Canvas>
           <div className="control-button" onClick={handleInteraction}>
             {isAnimating ? 'Stop Music' : 'Start Music'}
