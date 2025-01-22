@@ -27,16 +27,17 @@ function AppContent() {
   const [hoveredText, setHoveredText] = useState("");
   const [isAnimating, setIsAnimating] = useState(true);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [hasInteracted, setHasInteracted] = useState(false);
   const [showLpSelection, setShowLpSelection] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [showSongSelectionModal, setShowSongSelectionModal] = useState(false);
   const [isLoading, setIsLoading] = useState(false)
-  const [userId, setUserId] = useState('user123');
-  const [currentMusic, setCurrentMusic] = useState('./musics/Reality.mp3');
+  const [userId, setUserId] = useState(() => {
+    const savedUserId = localStorage.getItem('userId');
+    return savedUserId || null;
+  });
+  const [recommendedSongs, setRecommendedSongs] = useState([]);
   const [youTubeVideoId, setYouTubeVideoId] = useState(null);
   const [youTubePlayer, setYouTubePlayer] = useState(null);
-  const audioRef = useRef(null);
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -48,59 +49,20 @@ function AppContent() {
   console.log('(APP) Selected LP:', selectedLP);
 
   useEffect(() => {
+    const storedUserId = localStorage.getItem('userId');
+    if (storedUserId) {
+      setUserId(storedUserId);
+      setIsLoggedIn(true);
+    }
+  }, []);
+
+  useEffect(() => {
     console.log("USEEFFECT VIDEO ID: ", selectedLP.song?.videoId)
     if (selectedLP?.song?.videoId) {
       setYouTubeVideoId(selectedLP.song.videoId);
     }
   }, [selectedLP]);
 
-  // 오디오 객체 생성 및 기본 설정
-  // useEffect(() => {
-  //   audioRef.current = new Audio(currentMusic);
-  //   audioRef.current.loop = true;
-  //   audioRef.current.volume = 0.4;
-  //   audioRef.current.play();
-
-  //   return () => {
-  //     if (audioRef.current) {
-  //       audioRef.current.pause(); // 컴포넌트 언마운트 시 음악 정지
-  //     }
-  //   };
-  // }, [currentMusic]);
-
-  // useEffect(() => {
-  //   if (audioRef.current) {
-  //     if (isAnimating && hasInteracted) {
-  //       audioRef.current.play().catch((error) => {
-  //         console.error("Audio playback failed:", error);
-  //       });
-  //     } else {
-  //       audioRef.current.pause(); // 음악 정지
-  //     }
-  //   }
-  // }, [isAnimating, hasInteracted]);
-
-  // const handleLpSelect = (musicPath) => {
-  //   if (audioRef.current) {
-  //     audioRef.current.pause();
-  //     audioRef.current.src = musicPath;
-  //     audioRef.current.load();
-  //     audioRef.current.play();
-  //   }
-  //   setCurrentMusic(musicPath);
-  //   setShowLpSelection(false);
-  // };
-
-  // const handleInteraction = () => {
-  //   setHasInteracted(true);
-  //   setIsAnimating(!isAnimating);
-
-  //   if (audioRef.current && !isAnimating) {
-  //     audioRef.current.play().catch((error) => {
-  //       console.error("Audio playback failed:", error);
-  //     });
-  //   }
-  // };
 
   const handleSaveDiary = async (diaryText) => {
     if (!isLoggedIn) {
@@ -114,6 +76,13 @@ function AppContent() {
     }
 
     setIsLoading(true);
+
+
+    console.log('Request Payload:', {
+      user_id: userId,
+      text: diaryText
+    });
+
 
     try {
       const response = await axios.post('http://localhost:8000/lps/generate', {
@@ -136,7 +105,7 @@ function AppContent() {
 
       setShowSongSelectionModal(true);
     } catch (error) {
-      console.error("Error:", error);
+      console.error("Error:", error.response?.data || error.message);
       alert("LP 커버 생성에 실패했습니다.");
     }finally {
       setIsLoading(false); // 로딩 상태 종료
@@ -273,9 +242,13 @@ function AppContent() {
         .then((data) => {
           console.log("Server Response:", data);
           setIsLoggedIn(true);
-          setUserId(data.userId);
+          
+          localStorage.setItem('userId', data.user_id);
+          console.log("User ID:", data.user_id);
+          setUserId(data.user_id);
         })
         .catch((err) => console.error("Error saving user:", err));
+      
     },
     onError: () => {
       console.error("Login Failed");
@@ -299,18 +272,6 @@ function AppContent() {
       setShowModal(true)
     }
   };
-  // const handlef1Click = () => {
-  //   audioRef.current.volume = 0.1;
-  // };
-  // const handlef2Click = () => {
-  //   audioRef.current.volume = 0.4;
-  // };
-  // const handlef3Click = () => {
-  //   audioRef.current.volume = 0.7;
-  // };
-  // const handlef4Click = () => {
-  //   audioRef.current.volume = 1;
-  // };
 
   const handleCatClick = () => {
     if (isLoggedIn) {
