@@ -197,8 +197,9 @@ const LPRecordsPage = () => {
                   onClick={() => handleLPClick(lp)}
                 >
                   <img src={`data:image/png;base64,${lp.image}`} alt="LP Cover" />
-                  <button onClick={(e) => {
-                    toggleFavorite(lp, e);
+                  <button 
+                    className="favorite-button"
+                    onClick={(e) => { toggleFavorite(lp, e);
                   }}>
                     {lp.favorite ? '★' : '☆'}
                   </button>
