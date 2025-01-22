@@ -68,6 +68,10 @@ const LPRecordsPage = () => {
     fetchLPs();
   }, [userId]);
 
+  useEffect(() => {
+    console.log("🔍 (LPRECORDS) selectedLP 상태 변경됨:", selectedLP);
+  }, [selectedLP]);
+
   // 날짜 선택 핸들러
   const handleDateChange = async (date) => {
     setSelectedDate(date);
@@ -118,8 +122,10 @@ const LPRecordsPage = () => {
 
   // LP 클릭 핸들러
   const handleLPClick = (lp) => {
+    console.log("LP 클릭됨.", lp);
     setSelectedLP(lp);
     setIsDetailView(true);
+
   };
 
   // 상세보기 화면 바깥 클릭 핸들러
@@ -130,8 +136,15 @@ const LPRecordsPage = () => {
 
   // LP 클릭 시 메인 페이지로 데이터 전달
   const handleSelectLP = (record) => {
+    if (!record) {
+      console.error("(LPRECORDS) handleSelectLP: record is null or undefined!");
+      return;
+    }
     console.log('(LPRECORDS) Selected LP:', record);
     localStorage.setItem('selectedLP', JSON.stringify(record));  // 저장
+    setTimeout(() => {
+      console.log("(LPRECORDS) Selected LP after state update:", selectedLP);
+    }, 100);
     navigate(`/`, { state: { selectedLP: record } });
   };
 
@@ -208,7 +221,8 @@ const LPRecordsPage = () => {
             <div className="lp-info">
               <p>{new Date(selectedLP.created_at).toLocaleDateString()}</p>
               <h2>{selectedLP.text}</h2>
-              <button className="play-button" onClick={handleSelectLP(selectedLP)}>재생하기</button>
+              <button className="play-button" onClick={() => {console.log("재생 버튼 클릭됨! handleSelectLP 실행"); 
+                handleSelectLP(selectedLP);}}>재생하기</button>
             </div>
           </div>
         </div>

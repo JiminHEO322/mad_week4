@@ -160,6 +160,7 @@
     cursor: pointer;
     font-family: 'Ownglyph', sans-serif;
     font-size: 18px;
+    pointer-events: auto;
   }
   
   .play-button:hover {

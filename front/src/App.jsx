@@ -62,29 +62,45 @@ const [specialCharIndex, setSpecialCharIndex] = useState(0);
 
   const [selectedLP, setSelectedLP] = useState(() => {
     const savedLP = localStorage.getItem('selectedLP');
-    return savedLP ? JSON.parse(savedLP) : { song: defaultSong };
+    return savedLP ? JSON.parse(savedLP) : null;
   });
-  console.log('(APP) Selected LP:', selectedLP);
 
   useEffect(() => {
     const storedUserId = localStorage.getItem('userId');
+    console.log("🔍 useEffect - storedUserId:", storedUserId);
+  
     if (storedUserId) {
       setUserId(storedUserId);
       setIsLoggedIn(true);
+    } else {
+      setIsLoggedIn(false);
+      setSelectedLP({ song: defaultSong }); // 로그아웃 시 기본 음악 설정
     }
   }, []);
+  
+  useEffect(() => {
+    if (isLoggedIn) {
+      const savedLP = localStorage.getItem('selectedLP');
+      if (savedLP) {
+        console.log("📌 LocalStorage에서 불러온 LP:", JSON.parse(savedLP));
+        setSelectedLP(JSON.parse(savedLP));
+      }
+    }
+  }, [isLoggedIn]); // isLoggedIn이 true일 때만 실행
+  
 
   useEffect(() => {
-    setYouTubeVideoId(selectedLP?.song?.videoId || defaultSong.videoId);
-    console.log("USEEFFECT VIDEO ID: ", youTubeVideoId)
-  }, [selectedLP]);
-
-  useEffect(() => {
-    if (!isLoggedIn) {
-      setSelectedLP({ song: defaultSong }); // 로그아웃 시 기본 노래로 변경
+    if (isLoggedIn) {
+      if (selectedLP?.song?.videoId) {
+        console.log("🔄 로그인 상태: 사용자 선택 음악 재생", selectedLP.song.videoId);
+        setYouTubeVideoId(selectedLP.song.videoId);
+      }
+    } else {
+      console.log("🔄 로그아웃 상태: 기본 음악 재생", defaultSong.videoId);
       setYouTubeVideoId(defaultSong.videoId);
     }
-  }, [isLoggedIn]);
+  }, [isLoggedIn, selectedLP]);
+  
 
   useEffect(() => {
     if (isLoading) {
@@ -105,6 +121,7 @@ const [specialCharIndex, setSpecialCharIndex] = useState(0);
     setIsLoading(true);
     setSpecialCharIndex(0);
     setLoadingStage(0);
+    await new Promise(resolve => setTimeout(resolve, 1500)); 
 
     try {
       setLoadingStage(1);
@@ -197,6 +214,7 @@ const [specialCharIndex, setSpecialCharIndex] = useState(0);
     // 현재 상태 확인 (true = 애니메이션 실행 중, false = 정지 중)
     console.log("Current Animation State:", isAnimating);
     console.log("Current Player State:", youTubePlayer);
+    console.log("-- 재생할 비디오 아이디는: ", youTubeVideoId);
     if (isAnimating) {
       // 애니메이션을 멈춤 → 비디오를 pause
       console.log("Pausing video & stopping animation...");
@@ -231,12 +249,12 @@ const [specialCharIndex, setSpecialCharIndex] = useState(0);
   
   const handlePlayerReady = (player) => {
     console.log("handlePlayerReady called:", player);
-    if (player) {
-      setYouTubePlayer(player);
-      player.setVolume(40);  // 초기 볼륨 설정
-      player.playVideo(); 
+    setYouTubePlayer(player);
+    player.setVolume(40);
+    if (isAnimating) {
+      player.playVideo();  // LP가 회전 중일 때만 음악 재생
     } else {
-      console.error("Player is null!");
+      player.pauseVideo();  // LP가 멈춰있으면 자동 재생 방지
     }
   };
   
@@ -261,11 +279,11 @@ const [specialCharIndex, setSpecialCharIndex] = useState(0);
         .then((res) => res.json())
         .then((data) => {
           console.log("Server Response:", data);
-          setIsLoggedIn(true);
           
           localStorage.setItem('userId', data.user_id);
           console.log("User ID:", data.user_id);
           setUserId(data.user_id);
+          setIsLoggedIn(true);
         })
         .catch((err) => console.error("Error saving user:", err));
       
@@ -298,18 +316,22 @@ const [specialCharIndex, setSpecialCharIndex] = useState(0);
 
   const handleCatClick = () => {
     if (isLoggedIn) {
-      setIsLoggedIn(false); // 로그아웃 처리
+      console.log("🔴 로그아웃 진행...");
+      
+      // ✅ 상태 변경 순서 명확하게 설정
+      localStorage.removeItem("userId");
+      localStorage.removeItem("selectedLP");
+  
       setUserId(null);
-      setSelectedLP({ song: defaultSong });
-      setYouTubeVideoId(defaultSong.videoId);
-
-      localStorage.removeItem('userId');
-      localStorage.removeItem('selectedLP');
-
+      setIsLoggedIn(false);
+  
+      console.log("✅ 로그아웃 완료. 기본 LP와 노래로 변경됨.");
+      window.location.reload();
     } else {
-      handleGoogleLogin(); // 로그인 처리
+      handleGoogleLogin();
     }
   };
+  
 
   const handlePlayVideo = (videoId) => {
     console.log(`handlePlayVideo 호출됨, videoId: ${videoId}`);
@@ -392,7 +414,7 @@ const [specialCharIndex, setSpecialCharIndex] = useState(0);
           
             <div>
               <YouTubePlayer 
-                videoId={youTubeVideoId || defaultSong.videoId} 
+                videoId={youTubeVideoId} 
                 onPlayerReady={handlePlayerReady}/>
             </div>
           
