@@ -29,78 +29,35 @@ function AppContent() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [hasInteracted, setHasInteracted] = useState(false);
   const [showLpSelection, setShowLpSelection] = useState(false);
+  const [recommendedSongs, setRecommendedSongs] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [showSongSelectionModal, setShowSongSelectionModal] = useState(false);
   const [isLoading, setIsLoading] = useState(false)
   const [userId, setUserId] = useState('user123');
   const [currentMusic, setCurrentMusic] = useState('./musics/Reality.mp3');
-  const [youTubeVideoId, setYouTubeVideoId] = useState(null);
   const [youTubePlayer, setYouTubePlayer] = useState(null);
   const audioRef = useRef(null);
 
   const navigate = useNavigate();
   const location = useLocation();
 
+  const defaultSong = {
+    title: "Number One Girl",
+    artist: "Rosé",
+    videoId: "9XM1KnHvtGg",
+  };
+  const [youTubeVideoId, setYouTubeVideoId] = useState(defaultSong.videoId);
+
   const [selectedLP, setSelectedLP] = useState(() => {
     const savedLP = localStorage.getItem('selectedLP');
-    return savedLP ? JSON.parse(savedLP) : location.state?.selectedLP || null;
+    return savedLP ? JSON.parse(savedLP) : { song: defaultSong };
   });
-  console.log('(APP) Selected LP:', selectedLP);
 
   useEffect(() => {
-    console.log("USEEFFECT VIDEO ID: ", selectedLP.song?.videoId)
-    if (selectedLP?.song?.videoId) {
-      setYouTubeVideoId(selectedLP.song.videoId);
-    }
+    setYouTubeVideoId(selectedLP?.song?.videoId || defaultSong.videoId);
+    console.log("USEEFFECT VIDEO ID: ", youTubeVideoId)
   }, [selectedLP]);
 
-  // 오디오 객체 생성 및 기본 설정
-  // useEffect(() => {
-  //   audioRef.current = new Audio(currentMusic);
-  //   audioRef.current.loop = true;
-  //   audioRef.current.volume = 0.4;
-  //   audioRef.current.play();
-
-  //   return () => {
-  //     if (audioRef.current) {
-  //       audioRef.current.pause(); // 컴포넌트 언마운트 시 음악 정지
-  //     }
-  //   };
-  // }, [currentMusic]);
-
-  // useEffect(() => {
-  //   if (audioRef.current) {
-  //     if (isAnimating && hasInteracted) {
-  //       audioRef.current.play().catch((error) => {
-  //         console.error("Audio playback failed:", error);
-  //       });
-  //     } else {
-  //       audioRef.current.pause(); // 음악 정지
-  //     }
-  //   }
-  // }, [isAnimating, hasInteracted]);
-
-  // const handleLpSelect = (musicPath) => {
-  //   if (audioRef.current) {
-  //     audioRef.current.pause();
-  //     audioRef.current.src = musicPath;
-  //     audioRef.current.load();
-  //     audioRef.current.play();
-  //   }
-  //   setCurrentMusic(musicPath);
-  //   setShowLpSelection(false);
-  // };
-
-  // const handleInteraction = () => {
-  //   setHasInteracted(true);
-  //   setIsAnimating(!isAnimating);
-
-  //   if (audioRef.current && !isAnimating) {
-  //     audioRef.current.play().catch((error) => {
-  //       console.error("Audio playback failed:", error);
-  //     });
-  //   }
-  // };
 
   const handleSaveDiary = async (diaryText) => {
     if (!isLoggedIn) {
@@ -246,6 +203,7 @@ function AppContent() {
     if (player) {
       setYouTubePlayer(player);
       player.setVolume(40);  // 초기 볼륨 설정
+      player.playVideo(); 
     } else {
       console.error("Player is null!");
     }
@@ -299,18 +257,6 @@ function AppContent() {
       setShowModal(true)
     }
   };
-  // const handlef1Click = () => {
-  //   audioRef.current.volume = 0.1;
-  // };
-  // const handlef2Click = () => {
-  //   audioRef.current.volume = 0.4;
-  // };
-  // const handlef3Click = () => {
-  //   audioRef.current.volume = 0.7;
-  // };
-  // const handlef4Click = () => {
-  //   audioRef.current.volume = 1;
-  // };
 
   const handleCatClick = () => {
     if (isLoggedIn) {
@@ -370,13 +316,13 @@ function AppContent() {
             onSongSelect={handleSongSelect}
           />
 
-          {selectedLP?.song?.videoId && (
+          
             <div>
               <YouTubePlayer 
-                videoId={selectedLP.song.videoId} 
+                videoId={youTubeVideoId || defaultSong.videoId} 
                 onPlayerReady={handlePlayerReady}/>
             </div>
-          )}
+          
         </>
       )}
     </>

@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from backend.models import Song
+from models import Song
 
 class DiaryRequest(BaseModel):
     user_id: str
