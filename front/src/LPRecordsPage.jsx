@@ -1,10 +1,38 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import * as THREE from 'three';
+import { Canvas, useThree } from '@react-three/fiber';
 import './LPRecordsPage.css';
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
 import './CustomCalendar.css';
+import { OrbitControls } from '@react-three/drei';
+
+
+const CubeBackground = () => {
+  const { scene } = useThree();
+
+  useEffect(() => {
+    const loader = new THREE.CubeTextureLoader();
+    const texture = loader.load([
+      './images/cubemap/cube_left.png',
+      './images/cubemap/cube_right.png',
+      './images/cubemap/cube_up1.png',
+      './images/cubemap/cube_down1.png',
+      './images/cubemap/cube_front.png',
+      './images/cubemap/cube_back.png',
+    ]);
+    scene.background = texture;
+
+    return () => {
+      scene.background = null; // 클린업
+    };
+  }, [scene]);
+
+  return null;
+};
+
 
 const LPRecordsPage = () => {
   const [lpRecords, setLpRecords] = useState([]);
@@ -157,6 +185,10 @@ const LPRecordsPage = () => {
         
       ) : (
         <div className="lp-detail" onClick={handleBackdropClick}>
+          <Canvas>
+            <OrbitControls />
+            <CubeBackground /> {/* Cube Texture 배경 */}
+          </Canvas>
           <div className="lp-detail-container" onClick={(e) => e.stopPropagation()}>
             <div className="lp-cover-layout">
               <div className="lp-cover-detail">

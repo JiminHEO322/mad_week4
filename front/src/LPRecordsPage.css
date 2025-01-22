@@ -62,22 +62,20 @@
 
   
   .lp-detail {
-    position: fixed;
-    top: 0;
-    left: 0;
+    position: relative;
     width: 100vw;
     height: 100vh;
-    background-image: url('./images/lp5.jpg');
-    background-color: rgba(0, 0, 0, 0.5);
     display: flex;
+    overflow: hidden;
     align-items: center;
     justify-content: center;
-    z-index: 1000;
   }
   
   .lp-detail-container {
     background-image: url('./images/kraftpaper.jpg'); /* 상자 배경 */
     background-size: cover;
+    position: absolute;
+    z-index: 2;
     padding: 30px;
     border-radius: 10px;
     width: 500px;
