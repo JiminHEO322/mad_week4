@@ -39,6 +39,7 @@ const LPRecordsPage = () => {
 
   const [lpRecords, setLpRecords] = useState([]);
   const [originalRecords, setOriginalRecords] = useState([]);
+  const [favorites, setFavorites] = useState([]);
   const [selectedLP, setSelectedLP] = useState(null);
   const [isDetailView, setIsDetailView] = useState(false);
   const [selectedDate, setSelectedDate] = useState(new Date());
@@ -114,10 +115,43 @@ const LPRecordsPage = () => {
     setLpRecords(sortedRecords);
   };
 
-  // Star 클릭 핸들러 (즐겨찾기 기능 구현 전)
-  const handleShowFavorites = () => {
+   // Star 클릭 핸들러
+   const handleShowFavorites = () => {
     console.log('즐겨찾기 클릭');
-    alert('즐겨찾기 기능은 아직 구현되지 않았습니다!');
+    const favoritesOnly = originalRecords.filter(lp => lp.favorite);
+    setLpRecords(favoritesOnly);
+  };
+
+  // 즐겨찾기 토글 핸들러
+  const toggleFavorite = async (lp, e) => {
+    e.stopPropagation();
+
+    try {
+      const updatedFavorite = !lp.favorite;
+      console.log('즐겨찾기 설정 변경:', lp);
+      await axios.patch('http://localhost:8000/lps/update-favorite', {
+        user_id: lp.user_id,
+        text: lp.text,
+        favorite: updatedFavorite
+      }, {
+        headers: { 'Content-Type': 'application/json' }
+      })
+
+      // setLpRecords로 state 업데이트 (lpRecords, originalRecords 모두 업데이트)
+      setLpRecords(prevLpRecords =>
+        prevLpRecords.map(item =>
+          item.text === lp.text ? { ...item, favorite: updatedFavorite } : item
+        )
+      );
+      setOriginalRecords(prevOriginalRecords =>
+        prevOriginalRecords.map(item =>
+          item.text === lp.text ? { ...item, favorite: updatedFavorite } : item
+        )
+    );
+    } catch (error) {
+      console.error('Error updating favorite status:', error);
+      alert('즐겨찾기 설정을 변경할 수 없습니다.');
+    }
   };
 
   // LP 클릭 핸들러
@@ -163,6 +197,12 @@ const LPRecordsPage = () => {
                   onClick={() => handleLPClick(lp)}
                 >
                   <img src={`data:image/png;base64,${lp.image}`} alt="LP Cover" />
+                  <button 
+                    className="favorite-button"
+                    onClick={(e) => { toggleFavorite(lp, e);
+                  }}>
+                    {lp.favorite ? '★' : '☆'}
+                  </button>
                 </div>
               ))
             ) : (

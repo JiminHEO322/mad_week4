@@ -5,7 +5,7 @@ from fastapi import APIRouter, HTTPException
 from fastapi.responses import JSONResponse
 from database import diary_collection
 from models import LP, Song
-from diary_schema import DiaryRequest, SongSelectRequest
+from diary_schema import DiaryRequest, SongSelectRequest, FavoriteUpdateRequest
 from typing import Optional
 
 from services.image_gen import generate_image
@@ -132,6 +132,37 @@ def select_song(request: SongSelectRequest):
         {"$set": {"song": request.song.dict()}} 
     )
     return {"message": "Song added to LP successfully", "song": request.song.dict()}
+
+@router.patch("/update-favorite")
+def update_favorite(request: FavoriteUpdateRequest):
+    '''LP 즐겨찾기 설정'''
+    print("Received Request:", request.dict())  # 요청 디버깅
+    try:
+        print("Received Request:", request.dict())  # 요청 디버깅
+
+        # MongoDB는 datetime 객체를 직접 비교할 수 있음
+        diary = diary_collection.find_one({
+            "text": request.text,  
+            "user_id": request.user_id
+        })
+
+        if not diary:
+            raise HTTPException(status_code=404, detail="LP not found")
+
+        # 즐겨찾기 상태 업데이트
+        update_result = diary_collection.update_one(
+            {"text": request.text, "user_id": request.user_id},
+            {"$set": {"favorite": request.favorite}}
+        )
+
+        if update_result.matched_count == 0:
+            raise HTTPException(status_code=404, detail="LP update failed")
+
+        return {"message": "Favorite status updated successfully", "favorite": request.favorite}
+
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=f"Error: {str(e)}")
+    
 
 @router.get("/download")
 def download_diary(user_id: str, diary_id: str):

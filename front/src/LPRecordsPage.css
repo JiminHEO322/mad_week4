@@ -27,7 +27,7 @@
   .lp-box {
     position:relative;
     top: 120px;
-    padding: 0 480px 0 100px;
+    padding: 10px 480px 0 100px;
     overflow-y: auto;
     height: 80vh;
     display: grid;
@@ -50,8 +50,11 @@
   }
   
   .lp-cover {
+    position: relative;
+    display: inline-block;
     cursor: pointer;
     transition: transform 0.2s ease;
+    margin: 0 auto;
   }
   
   .lp-cover img {
@@ -62,7 +65,7 @@
   }
   
   .lp-cover:hover {
-    transform: scale(1.1);
+    transform: scale(1.05);
   }
 
   .lp-page-container {
@@ -165,6 +168,28 @@
   
   .play-button:hover {
     background-color: #F2B03F;
+  }
+
+  .favorite-button {
+    position: absolute;
+    top: 10px; /* 상단에서 10px 떨어진 위치 */
+    right: 10px; /* 오른쪽에서 10px 떨어진 위치 */
+    background: rgba(255, 255, 255, 0.8); /* 배경 색상 투명 효과 */
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    text-align: center;
+    line-height: 40px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+    transition: all 0.3s ease-in-out;
+  }
+
+  .favorite-button:hover {
+    background: rgba(255, 255, 255, 1); /* 마우스 오버 시 배경 변경 */
+    transform: scale(1.1);
   }
 
   .home-cat-icon {
