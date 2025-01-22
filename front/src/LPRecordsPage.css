@@ -29,12 +29,12 @@
     top: 120px;
     padding: 0 480px 0 100px;
     overflow-y: auto;
-    max-height: 80vh;
+    height: 80vh;
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); 
     gap: 20px; /* 카드 간 간격 */
     justify-content: center; /* 카드 중앙 정렬 */
-    align-content: center; /* 상하 중앙 정렬 */
+    align-content: flex-start;
   }
 
   .no-lp-message {
