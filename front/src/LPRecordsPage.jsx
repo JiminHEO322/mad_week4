@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import * as THREE from 'three';
 import { Canvas, useThree } from '@react-three/fiber';
@@ -35,12 +35,15 @@ const CubeBackground = () => {
 
 
 const LPRecordsPage = () => {
+  const location = useLocation();
+
   const [lpRecords, setLpRecords] = useState([]);
   const [originalRecords, setOriginalRecords] = useState([]);
   const [selectedLP, setSelectedLP] = useState(null);
   const [isDetailView, setIsDetailView] = useState(false);
   const [selectedDate, setSelectedDate] = useState(new Date());
-  const userId = 'user123'; // 필요 시 로그인 후 상태에서 받아오기
+  const userId = location.state?.userId;
+  console.log('User ID:', userId);
   const navigate = useNavigate();
 
   useEffect(() => {

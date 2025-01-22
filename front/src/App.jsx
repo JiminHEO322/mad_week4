@@ -4,7 +4,7 @@ import './App.css';
 import { GoogleOAuthProvider, useGoogleLogin } from '@react-oauth/google';
 import { Canvas } from '@react-three/fiber';
 import MyElement3D from './MyElement3D';
-import { useState, useRef, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import Modal from './Modal';
 import LPRecordsPage from './LPRecordsPage';
 import SongSelectionModal from './SongSelectionModal';
@@ -134,11 +134,11 @@ function AppContent() {
       console.log("VIDEO ID: ", videoId)
       setYouTubeVideoId(videoId);
 
-      // 기존 LP 데이터에 'song' 키 추가
+
       const updatedLP = { 
         ...selectedLP,
         song: {
-          ...selectedLP.song,  // 기존 song 객체가 있다면 유지
+          ...selectedLP.song,
           title: song.title,
           artist: song.artist,
           videoId: videoId
@@ -192,14 +192,6 @@ function AppContent() {
     setIsAnimating(!isAnimating);
   };
   
-  
-  const playSelectedSong = () => {
-    if (selectedLP?.song?.videoId) {
-      setYouTubeVideoId(selectedLP.song.videoId);
-    } else {
-      alert("선택된 LP에 노래가 없습니다.");
-    }
-  };
 
   const handlef1Click = () => {
     if (youTubePlayer) youTubePlayer.setVolume(10);  // 0~100
@@ -265,7 +257,7 @@ function AppContent() {
       alert("고양이를 눌러서 로그인을 해주세요!");
       return;
     }else{
-      navigate('/lp-records'); 
+      navigate('/lp-records', { state: { userId: userId } }); 
     }
   };
 
