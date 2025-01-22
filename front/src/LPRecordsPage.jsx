@@ -205,7 +205,7 @@ const LPRecordsPage = () => {
             <div className="lp-info">
               <p>{new Date(selectedLP.created_at).toLocaleDateString()}</p>
               <h2>{selectedLP.text}</h2>
-              <button className="play-button" onClick={handleSelectLP}>재생하기</button>
+              <button className="play-button" onClick={handleSelectLP(selectedLP)}>재생하기</button>
             </div>
           </div>
         </div>

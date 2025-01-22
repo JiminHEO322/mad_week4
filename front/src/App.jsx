@@ -5,7 +5,6 @@ import { GoogleOAuthProvider, useGoogleLogin } from '@react-oauth/google';
 import { Canvas } from '@react-three/fiber';
 import MyElement3D from './MyElement3D';
 import { useState, useRef, useEffect } from 'react';
-import LpSelection from './LpSelection';
 import Modal from './Modal';
 import LPRecordsPage from './LPRecordsPage';
 
@@ -29,7 +28,7 @@ function AppContent() {
   const [showModal, setShowModal] = useState(false);
   const [isLoading, setIsLoading] = useState(false)
   const [userId, setUserId] = useState('user123');
-  const [currentMusic, setCurrentMusic] = useState('./musics/backgroundmusic.mp3');
+  const [currentMusic, setCurrentMusic] = useState('./musics/Reality.mp3');
   const audioRef = useRef(null);
 
   const navigate = useNavigate();
@@ -90,6 +89,11 @@ function AppContent() {
   };
 
   const handleSaveDiary = async (diaryText) => {
+    if (!isLoggedIn) {
+      alert("고양이를 눌러서 로그인해주세요!");
+      return;
+    }
+
     if (!diaryText.trim()) {
       alert("일기 내용을 입력해주세요.");
       return;
@@ -143,6 +147,7 @@ function AppContent() {
         .then((data) => {
           console.log("Server Response:", data);
           setIsLoggedIn(true);
+          setUserId(data.userId);
         })
         .catch((err) => console.error("Error saving user:", err));
     },
@@ -152,11 +157,21 @@ function AppContent() {
   });
 
   const handleRecordClick = () => {
-    navigate('/lp-records'); 
+    if(!isLoggedIn){
+      alert("고양이를 눌러서 로그인을 해주세요!");
+      return;
+    }else{
+      navigate('/lp-records'); 
+    }
   };
 
   const handleTableClick = () => {
-    setShowModal(true)
+    if(!isLoggedIn){
+      alert("고양이를 눌러서 로그인을 해주세요!");
+      return;
+    }else{
+      setShowModal(true)
+    }
   };
   const handlef1Click = () => {
     audioRef.current.volume = 0.1;
@@ -174,10 +189,8 @@ function AppContent() {
   const handleCatClick = () => {
     if (isLoggedIn) {
       setIsLoggedIn(false); // 로그아웃 처리
-      console.log("로그아웃 되었습니다.");
     } else {
       handleGoogleLogin(); // 로그인 처리
-      console.log("로그인 되었습니다.");
     }
   };
 

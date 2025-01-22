@@ -12,9 +12,12 @@ function MyElement3D({ isAnimating, onRecordClick, onCatClick, onTableClick, onS
     const spotlight = useRef()
     const turntableRef = useRef()
     const lpCoverRef = useRef()
+    const toneArmRef = useRef()
+    const hoveredObjectRef = useRef(null);
 
     const { scene, gl, camera } = useThree()
     const model = useGLTF("./models/turntable.glb")
+    const defaultLPImage = './images/reality_cover.png';
     const animations = useAnimations(model.animations, model.scene)
     const { actionName } = { actionName: animations.names[0] }
 
@@ -48,23 +51,26 @@ function MyElement3D({ isAnimating, onRecordClick, onCatClick, onTableClick, onS
 
     // LP 표지 
     useEffect(() => {
-        if (selectedLP && selectedLP.image) {
-            const texture = new THREE.TextureLoader().load(`data:image/png;base64,${selectedLP.image}`);
-            // if (lpCoverRef.current) {
-            //     lpCoverRef.current.material.map = texture;
-            //     lpCoverRef.current.material.needsUpdate = true;  // 텍스처 갱신
-            // }
+        let texture;
 
-            // LP 이름을 가진 객체 찾기
-            const lpObject = model.scene.getObjectByName("LpImage");
-            console.log("LpImage 찾음" + lpObject)
-
-            if (lpObject) {
-                lpObject.material.map = texture;  // LP판의 텍스처로 표지 이미지 설정
-                lpObject.material.needsUpdate = true; // 텍스처 갱신
-            }
+        if (!isLoggedIn || !selectedLP || !selectedLP.image) {
+            //console.log("기본 LP 이미지", defaultLPImage);
+            texture = new THREE.TextureLoader().load(defaultLPImage);
+        } else {
+            //console.log("로그인된 사용자의 이미지");
+            texture = new THREE.TextureLoader().load(`data:image/png;base64,${selectedLP.image}`);
         }
-    }, [selectedLP])
+
+        const lpObject = model.scene.getObjectByName("LpImage");
+        if (lpObject) {
+            lpObject.material = new THREE.MeshStandardMaterial();
+            lpObject.material.map = texture;
+            lpObject.material.needsUpdate = true;
+        }else {
+            console.warn("LpImage 객체를 찾을 수 없습니다.");
+        }
+
+    }, [isLoggedIn, selectedLP, model.scene])
 
     //로그인 여부에 따라서 고양이 교체
     useEffect(() => {
@@ -98,6 +104,19 @@ function MyElement3D({ isAnimating, onRecordClick, onCatClick, onTableClick, onS
         }
     }, [isAnimating, actionName, animations.actions])
 
+    useEffect(() => {
+        if (model && model.scene) {
+            model.scene.traverse((child) => {
+                if (child.name === "Tone_Arm") { // Tone Arm 이름 확인
+                    toneArmRef.current = child;
+                    // console.log("Tone Arm 발견:", toneArmRef.current);
+                    // console.log("Tone Arm 위치:", toneArmRef.current.position);
+                    // console.log("Tone Arm 위치:", toneArmRef.current.rotation);
+                }
+            });
+        }
+    }, [model]);
+
 
     // 턴테이블에서 객체 찾기 및 클릭 처리
     useEffect(() => {
@@ -114,49 +133,49 @@ function MyElement3D({ isAnimating, onRecordClick, onCatClick, onTableClick, onS
             model.scene.traverse((child) => {
                 if (child.name === "Table") {
                     tableMesh = child;
-                    console.log("Found tableMesh:", tableMesh);
+                    //console.log("Found tableMesh:", tableMesh);
                     tableMesh.userData.isInteractive = true
                     tableMesh.userData.onClick = onTableClick
                 }
                 if (child.name === "LP_1") {
                     lpMesh = child
-                    console.log("Found LP Mesh:", lpMesh)
+                    //console.log("Found LP Mesh:", lpMesh)
                     lpMesh.userData.isInteractive = true
                     lpMesh.userData.onClick = onRecordClick
                 }
                 if (child.name === "blackcat") {
                     catMesh = child;
-                    console.log("Found Cat Mesh:", catMesh);
+                    //console.log("Found Cat Mesh:", catMesh);
                     catMesh.userData.isInteractive = true
                     catMesh.userData.onClick = onCatClick
                 }
                 if (child.name === "\bF5") {
                     startMesh = child;
-                    console.log("Found startMesh:", startMesh);
+                    //console.log("Found startMesh:", startMesh);
                     startMesh.userData.isInteractive = true
                     startMesh.userData.onClick = onStartClick
                 }
                 if (child.name === "F1") {
                     f1Mesh = child;
-                    console.log("Found f1Mesh:", f1Mesh);
+                    //console.log("Found f1Mesh:", f1Mesh);
                     f1Mesh.userData.isInteractive = true
                     f1Mesh.userData.onClick = onf1Click
                 }
                 if (child.name === "F2") {
                     f2Mesh = child;
-                    console.log("Found f1Mesh:", f2Mesh);
+                    //console.log("Found f1Mesh:", f2Mesh);
                     f2Mesh.userData.isInteractive = true
                     f2Mesh.userData.onClick = onf2Click
                 }
                 if (child.name === "F3") {
                     f3Mesh = child;
-                    console.log("Found f1Mesh:", f3Mesh);
+                    //console.log("Found f1Mesh:", f3Mesh);
                     f3Mesh.userData.isInteractive = true
                     f3Mesh.userData.onClick = onf3Click
                 }
                 if (child.name === "F4") {
                     f4Mesh = child;
-                    console.log("Found f1Mesh:", f4Mesh);
+                    //console.log("Found f1Mesh:", f4Mesh);
                     f4Mesh.userData.isInteractive = true
                     f4Mesh.userData.onClick = onf4Click
                 }
@@ -169,7 +188,7 @@ function MyElement3D({ isAnimating, onRecordClick, onCatClick, onTableClick, onS
             // 전체 씬에서 상호작용 설정
             scene.traverse((child) => {
                 if (child.isMesh) {
-                    console.log("Mesh found:", child.name) // 모든 메쉬 이름 출력
+                    //console.log("Mesh found:", child.name) // 모든 메쉬 이름 출력
                 }
                 if (child.isMesh && child.userData.isInteractive) {
                 child.onClick = child.userData.onClick;
@@ -218,52 +237,73 @@ function MyElement3D({ isAnimating, onRecordClick, onCatClick, onTableClick, onS
 
         // 씬 내의 모든 객체와 교차하는지 확인
         const intersects = raycaster.intersectObjects(scene.children, true)
+
+        if (hoveredObjectRef.current) {
+            resetHoverEffect(hoveredObjectRef.current);
+        }
+
         if (intersects.length > 0) {
             const target = intersects[0].object
-            if(target.name === "blackcat"){
-                setHoveredText("♧ 로그인 하기 ♧");
-                target.position.y = 2.0520457029342651
-            } else if (target.name === "\byellowcat") {
-                setHoveredText("♧ 로그아웃 하기 ♧");
-                target.position.y = 2.0520457029342651
-            } else if (target.name === "LP_1"){
-                setHoveredText("£ LP 변경하기 £");
-                target.scale.set(1.1, 1.1, 1.1)
-                // target.material.opacity = 0.7 
-                // target.material.transparent = true 
-            } else if (target.name === 'Table'){
-                setHoveredText("♤ 오늘의 LP 만들기 ♤");
-                //target.scale.set(1.48578418, 0.12474172, 1.03498059)
-                target.material.opacity = 0.5 
-                target.material.transparent = true 
-                //target.material.emissive.set(0xfaf2c6)
-            } else if (target.name === 'F1'|| target.name === 'F2'|| target.name === 'F3'|| target.name === 'F4'){
-                setHoveredText("† 음악 볼륨 조절 †");
-                target.material.emissive.set(0xF6C2DC)
-            } else if(target.name === '\bF5'){
-                setHoveredText("¢ 음악 재생하기/멈추기 ¢");
-                target.material.emissive.set(0xFEAEC6)
-            } else {
-                setHoveredText("")
-            }
+            hoveredObjectRef.current = target;
+            applyHoverEffect(target);
+            
         } else {
             setHoveredText("")
+            hoveredObjectRef.current = null;
         }
     }
+
+    const applyHoverEffect=(target) => {
+        if(target.name === "blackcat"){
+            console.log("검정냥");
+            if(isLoggedIn){
+                console.log("로그인된 노랑냥 위치", target.position.y);
+                setHoveredText("♧ 로그아웃 하기 ♧");
+                target.position.y = 3.0520457029342651;}
+            else {
+                console.log("로그인 안된 검정냥");
+                setHoveredText("♧ 로그인 하기 ♧");
+                target.position.y = 2.0520457029342651;}
+        } else if (target.name === "LP_1"){
+            setHoveredText("£ LP 변경하기 £");
+            target.scale.set(1.1, 1.1, 1.1)
+        } else if (target.name === 'Table'){
+            setHoveredText("♤ 오늘의 LP 만들기 ♤");
+            target.material.opacity = 0.5 
+            target.material.transparent = true 
+        } else if (target.name === 'F1'|| target.name === 'F2'|| target.name === 'F3'|| target.name === 'F4'){
+            setHoveredText("† 음악 볼륨 조절 †");
+            target.material.emissive.set(0xF6C2DC)
+        } else if(target.name === '\bF5'){
+            setHoveredText("¢ 음악 재생하기/멈추기 ¢");
+            target.material.emissive.set(0xFEAEC6)
+        }
+    }
+
+    const resetHoverEffect = (child) => {
+        if(child.name === "blackcat" || child.name === "\byellowcat"){
+            child.position.y = 1.0520457029342651;
+        } else if(child.name === "LP_1"){
+            child.scale.set(1, 1, 1)
+        } else if(child.name === 'Table'){
+            child.material.opacity = 1
+            child.material.transparent = false
+        } else if (child.name === '\bF5'|| child.name === 'F1'|| child.name === 'F2'|| child.name === 'F3'|| child.name === 'F4'){
+            child.material.emissive.set(0x000000)
+        }
+    }
+
+
     const handlePointerOut = () => {
         scene.traverse((child) => {
             if (child.isMesh) {
                 if(child.name === "blackcat" || child.name === "\byellowcat"){
-                    child.position.y = 1.0520457029342651
+                    child.position.y = 1.0520457029342651;
                 } else if(child.name === "LP_1"){
                     child.scale.set(1, 1, 1)
-                    // child.material.opacity = 1
-                    // child.material.transparent = false
                 } else if(child.name === 'Table'){
-                    //child.scale.set(1.3507128953933716, 0.11340156197547913, 0.940891444683075)
                     child.material.opacity = 1
                     child.material.transparent = false
-                    //child.material.emissive.set(0x000000)
                 } else if (child.name === '\bF5'|| child.name === 'F1'|| child.name === 'F2'|| child.name === 'F3'|| child.name === 'F4'){
                     child.material.emissive.set(0x000000)
                    
