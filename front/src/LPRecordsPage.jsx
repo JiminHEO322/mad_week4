@@ -139,15 +139,21 @@ const LPRecordsPage = () => {
         <div className="lp-grid">
           <header className="lp-header">♧ 나의 LP 다이어리 ♧</header>
           <div className='lp-box'>
-            {lpRecords.map((lp, index) => (
-              <div
-                key={index}
-                className="lp-cover"
-                onClick={() => handleLPClick(lp)}
-              >
-                <img src={`data:image/png;base64,${lp.image}`} alt="LP Cover" />
+            {lpRecords.length > 0 ? (
+              lpRecords.map((lp, index) => (
+                <div
+                  key={index}
+                  className="lp-cover"
+                  onClick={() => handleLPClick(lp)}
+                >
+                  <img src={`data:image/png;base64,${lp.image}`} alt="LP Cover" />
+                </div>
+              ))
+            ) : (
+              <div className="no-lp-message">
+                {`${selectedDate.getFullYear()}년 ${selectedDate.getMonth() + 1}월 ${selectedDate.getDate()}일에 만들어진 LP가 없습니다.`}
               </div>
-            ))}
+            )}
           </div>
           <div className="custom-calendar-container">
             <Calendar
