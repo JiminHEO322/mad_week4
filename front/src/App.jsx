@@ -25,7 +25,7 @@ function App() {
 
 function AppContent() {
   const [hoveredText, setHoveredText] = useState("");
-  const [isAnimating, setIsAnimating] = useState(true);
+  const [isAnimating, setIsAnimating] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [showLpSelection, setShowLpSelection] = useState(false);
   const [recommendedSongs, setRecommendedSongs] = useState([]);
@@ -42,9 +42,9 @@ function AppContent() {
   const location = useLocation();
 
   const defaultSong = {
-    title: "Number One Girl",
-    artist: "Rosé",
-    videoId: "9XM1KnHvtGg",
+    title: "Reality",
+    artist: "Richard Sanderson",
+    videoId: "T5dnEKqOaHw",
   };
   const [youTubeVideoId, setYouTubeVideoId] = useState(defaultSong.videoId);
 
@@ -66,6 +66,13 @@ function AppContent() {
     setYouTubeVideoId(selectedLP?.song?.videoId || defaultSong.videoId);
     console.log("USEEFFECT VIDEO ID: ", youTubeVideoId)
   }, [selectedLP]);
+
+  useEffect(() => {
+    if (!isLoggedIn) {
+      setSelectedLP({ song: defaultSong }); // 로그아웃 시 기본 노래로 변경
+      setYouTubeVideoId(defaultSong.videoId);
+    }
+  }, [isLoggedIn]);
 
 
   const handleSaveDiary = async (diaryText) => {
@@ -281,6 +288,13 @@ function AppContent() {
   const handleCatClick = () => {
     if (isLoggedIn) {
       setIsLoggedIn(false); // 로그아웃 처리
+      setUserId(null);
+      setSelectedLP({ song: defaultSong });
+      setYouTubeVideoId(defaultSong.videoId);
+
+      localStorage.removeItem('userId');
+      localStorage.removeItem('selectedLP');
+
     } else {
       handleGoogleLogin(); // 로그인 처리
     }

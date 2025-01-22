@@ -376,12 +376,16 @@ function MyElement3D({ isAnimating, onRecordClick, onCatClick, onTableClick, onS
                 onPointerOut={handlePointerOut}
             />
 
-            {selectedLP && selectedLP.image && (
-                <mesh ref={lpCoverRef} position={[30, 3, 0]} rotation-y={-90 * Math.PI / 180}>
-                    <planeGeometry args={[20, 20]} />
-                    <meshStandardMaterial map={new THREE.TextureLoader().load(`data:image/png;base64,${selectedLP.image}`)} />
-                </mesh>
-            )}
+            <mesh ref={lpCoverRef} position={[30, 7, 0]} rotation-y={-90 * Math.PI / 180}>
+                <planeGeometry args={[30, 30]} />
+                <meshStandardMaterial 
+                    map={new THREE.TextureLoader().load(
+                        isLoggedIn && selectedLP?.image 
+                            ? `data:image/png;base64,${selectedLP.image}` 
+                            : './images/reality_cover.png' // 기본 LP 이미지
+                    )} 
+                />
+            </mesh>
 
 
 
