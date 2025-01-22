@@ -27,16 +27,16 @@ function AppContent() {
   const [hoveredText, setHoveredText] = useState("");
   const [isAnimating, setIsAnimating] = useState(true);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [hasInteracted, setHasInteracted] = useState(false);
   const [showLpSelection, setShowLpSelection] = useState(false);
   const [recommendedSongs, setRecommendedSongs] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [showSongSelectionModal, setShowSongSelectionModal] = useState(false);
   const [isLoading, setIsLoading] = useState(false)
-  const [userId, setUserId] = useState('user123');
-  const [currentMusic, setCurrentMusic] = useState('./musics/Reality.mp3');
+  const [userId, setUserId] = useState(() => {
+    const savedUserId = localStorage.getItem('userId');
+    return savedUserId || null;
+  });
   const [youTubePlayer, setYouTubePlayer] = useState(null);
-  const audioRef = useRef(null);
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -52,6 +52,15 @@ function AppContent() {
     const savedLP = localStorage.getItem('selectedLP');
     return savedLP ? JSON.parse(savedLP) : { song: defaultSong };
   });
+  console.log('(APP) Selected LP:', selectedLP);
+
+  useEffect(() => {
+    const storedUserId = localStorage.getItem('userId');
+    if (storedUserId) {
+      setUserId(storedUserId);
+      setIsLoggedIn(true);
+    }
+  }, []);
 
   useEffect(() => {
     setYouTubeVideoId(selectedLP?.song?.videoId || defaultSong.videoId);
@@ -71,6 +80,13 @@ function AppContent() {
     }
 
     setIsLoading(true);
+
+
+    console.log('Request Payload:', {
+      user_id: userId,
+      text: diaryText
+    });
+
 
     try {
       const response = await axios.post('http://localhost:8000/lps/generate', {
@@ -93,7 +109,7 @@ function AppContent() {
 
       setShowSongSelectionModal(true);
     } catch (error) {
-      console.error("Error:", error);
+      console.error("Error:", error.response?.data || error.message);
       alert("LP 커버 생성에 실패했습니다.");
     }finally {
       setIsLoading(false); // 로딩 상태 종료
@@ -231,9 +247,13 @@ function AppContent() {
         .then((data) => {
           console.log("Server Response:", data);
           setIsLoggedIn(true);
-          setUserId(data.userId);
+          
+          localStorage.setItem('userId', data.user_id);
+          console.log("User ID:", data.user_id);
+          setUserId(data.user_id);
         })
         .catch((err) => console.error("Error saving user:", err));
+      
     },
     onError: () => {
       console.error("Login Failed");
