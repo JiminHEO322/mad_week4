@@ -1,0 +1,14 @@
+GET https://www.googleapis.com/youtube/v3/search?part=snippet&q=JOYRIDE&type=video&videoCategoryId=10&key=AIzaSyB07tk63q8XN3iID8jf9saZBKiAITgGtDY
+
+###
+POST http://localhost:8000/lps/select-song
+Content-Type:application/json
+
+{
+  "user_id": "user123",
+  "diary_id": "678f55fc49da6bf9cc9a157a",
+  "song": {
+    "artist" : "Sick Puppies",
+    "title": "Should've Known Better",
+    "videoId": "j7nogJ_WBYo"  }
+}
