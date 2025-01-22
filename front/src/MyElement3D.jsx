@@ -37,6 +37,15 @@ function MyElement3D({ isAnimating, onRecordClick, onCatClick, onTableClick, onS
         scene.background = texture
     }, [scene])
 
+    useEffect(() => {
+        if (turntableRef.current) {
+          const turntableObject = turntableRef.current;
+          if (light1.current) light1.current.target = turntableObject;
+          if (light2.current) light2.current.target = turntableObject;
+          if (spotlight.current) spotlight.current.target = turntableObject;
+        }
+      }, [turntableRef]);
+
     // LP 표지 
     useEffect(() => {
         if (selectedLP && selectedLP.image) {

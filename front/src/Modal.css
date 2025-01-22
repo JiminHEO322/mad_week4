@@ -55,8 +55,9 @@
   .save-btn {
     font-family: 'Ownglyph';
     font-size: 16px;
+    margin-right: 40px;
     padding: 10px 20px;
-    background: #28a745;
+    background: #6F6F4B;
     color: white;
     border: none;
     border-radius: 5px;
@@ -66,8 +67,9 @@
   .close-btn {
     font-family: 'Ownglyph';
     font-size: 16px;
+    margin-left: 40px;
     padding: 10px 20px;
-    background: #dc3545;
+    background: #D64B34;
     color: white;
     border: none;
     border-radius: 5px;
@@ -75,10 +77,10 @@
   }
   
   .save-btn:hover {
-    background: #218838;
+    background: #F2B03F;
   }
   
   .close-btn:hover {
-    background: #c82333;
+    background: #F2B03F;
   }
   
