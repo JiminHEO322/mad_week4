@@ -6,14 +6,21 @@ load_dotenv()
 LASTFM_API_KEY = os.getenv('LASTFM_API_KEY')
 LASTFM_API_URL = 'http://ws.audioscrobbler.com/2.0/'
 
-def recommend_song(mood: str):
+def recommend_song(mood: str, keyword: str = None, limit: int = 3):
     recommend_list = []
+    
+    # 태그 구성: 감정 + 키워드 조합
+    if keyword:
+        search_tag = f"{mood},{keyword}"  # 예: "happy,rain"
+    else:
+        search_tag = mood
+        
     params = {
         'method': 'tag.gettoptracks',
-        'tag': mood,
+        'tag': search_tag,
         'api_key': LASTFM_API_KEY,
         'format': 'json',
-        'limit': 3
+        'limit': limit
     }
 
     response = requests.get(LASTFM_API_URL, params=params)

@@ -15,7 +15,7 @@ def english_translation(message: str):
     result = translator.translate_text(message, source_lang='KO', target_lang='EN-US')
     return result.text
 
-def mood_extraction(message: str):
+def mood_extraction(message: str, top_n: int = 3):
     API_URL = "https://api-inference.huggingface.co/models/bhadresh-savani/distilbert-base-uncased-emotion"
     headers = {"Authorization": HUGGINGFACE_API_KEY}
 
@@ -33,13 +33,22 @@ def mood_extraction(message: str):
         if not isinstance(data[0], list) or len(data[0]) == 0:
             raise ValueError("Unexpected response format.")
         
-        return data[0][0]["label"]
+        emotions = sorted(data[0], key=lambda x: x["score"], reverse=True)  # 점수 기준 정렬
+        return [{"label": emo["label"], "score": round(emo["score"], 3)} for emo in emotions[:top_n]]
     
     except (KeyError, IndexError, ValueError) as e:
         print(f"Error processing response: {e}")
-        return "unknown"  # 기본값 반환
+        return [{"label": "unknown", "score": 0.0}] 
 
-def keyword_extraction(message: str):
+def keyword_extraction(message: str, top_n: int = 5, diversity: float = 0.7):
     kw_model = KeyBERT()
-    keywords = kw_model.extract_keywords(message, top_n=1)
-    return keywords[0][0]
+    keywords = kw_model.extract_keywords(
+        message,
+        keyphrase_ngram_range=(1, 2),  # 1~2개의 단어 조합 허용
+        stop_words='english',
+        top_n=top_n,
+        use_maxsum=True,
+        use_mmr=True,
+        diversity=diversity  # 다양성을 조정
+    )
+    return [kw[0] for kw in keywords]

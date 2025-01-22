@@ -54,7 +54,7 @@ const LPRecordsPage = () => {
         });
 
         if (response.data.length === 0) {
-          alert('LP 기록이 없습니다.');
+          //alert('LP 기록이 없습니다.');
         } else {
           setLpRecords(response.data);
           setOriginalRecords(response.data);

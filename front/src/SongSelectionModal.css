@@ -6,7 +6,7 @@
     font-style: normal;
   }
   
-  .modal-overlay {
+  .modal-overlay1 {
       position: fixed;
       top: 0;
       left: 0;
@@ -19,7 +19,7 @@
     }
     
     /* 모달 박스 스타일 */
-    .modal-content {
+    .modal-content1 {
       font-family: 'Ownglyph';
       background: rgba(255, 255, 255, 0.8);
       padding: 20px;
@@ -33,55 +33,7 @@
     .modal-content h2 {
       font-size: 32px;
     }
-  
-    textarea {
-      background: rgba(255, 255, 255, 0.8);
-    }
-  
-    textarea::placeholder {
-      font-family: 'Ownglyph';
-      font-size: 20px;                 
-      color: #aaa;                   
-      font-style: italic;             
-    }
-    
-    /* 버튼 스타일 */
-    .modal-actions {
-      margin-top: 15px;
-      display: flex;
-      justify-content: space-between;
-    }
-    
-    .save-btn {
-      font-family: 'Ownglyph';
-      font-size: 16px;
-      padding: 10px 20px;
-      background: #28a745;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-    
-    .close-btn {
-      font-family: 'Ownglyph';
-      font-size: 16px;
-      padding: 10px 20px;
-      background: #dc3545;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-    
-    .save-btn:hover {
-      background: #218838;
-    }
-    
-    .close-btn:hover {
-      background: #c82333;
-    }
-
+ 
     
     .play-button {
       background: none;

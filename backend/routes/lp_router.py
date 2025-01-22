@@ -57,13 +57,19 @@ def generate_diary(request: DiaryRequest):
     print(f"Translated text: {translated_text}")
     mood = mood_extraction(translated_text)
     print(f"Detected mood: {mood}")
+    if isinstance(mood, list):
+        mood_prompt = ", ".join([emo["label"] for emo in mood])
+    else:
+        mood_prompt = mood
+        print(f"Detected mood: {mood}")
     keyword = keyword_extraction(translated_text)
     print(f"Detected keyword: {keyword}")
 
     if mood == "unknown":
-        prompt = f"vinyl record cover featuring {keyword}"
+        prompt = f"artistic vinyl record cover, inspired by the theme of {', '.join(keyword)}, without any vinyl disc, record player, or turntable"
     else:
-        prompt = f"vinyl record cover in a {mood} style, featuring {keyword}"
+        prompt = f"A {mood_prompt} and artistic illustration for a vinyl record cover, inspired by the theme of {', '.join(keyword)}, focusing on abstract art and minimalistic patterns, without showing any vinyl disc or record player"
+
     
     # Hugging Face 이미지 생성
     image = generate_image(prompt)
