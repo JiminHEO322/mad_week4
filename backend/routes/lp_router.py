@@ -1,11 +1,12 @@
 import base64
 import os
-from datetime import datetime
+from datetime import datetime, timedelta
 from fastapi import APIRouter, HTTPException
 from fastapi.responses import JSONResponse
 from database import diary_collection
 from models import LP, Song
 from diary_schema import DiaryRequest
+from typing import Optional
 
 from services.image_gen import generate_image
 from services.song_gen import recommend_song
@@ -17,9 +18,23 @@ router = APIRouter()
 
 
 @router.get("/")
-def get_diaries(user_id: str):
+def get_diaries(user_id: str, date: Optional[str] = None):
     '''유저의 모든 LP 조회'''
-    diaries = list(diary_collection.find({"user_id": user_id}, {"_id": 0}))
+    query = {"user_id": user_id}
+    
+    # 날짜가 제공되었을 경우 필터링
+    if date:
+        try:
+            target_date = datetime.strptime(date, "%Y-%m-%d")
+            next_day = target_date + timedelta(days=1)  # 다음 날 계산
+            query["created_at"] = {
+                "$gte": target_date,
+                "$lt": next_day
+            }
+        except ValueError:
+            raise HTTPException(status_code=400, detail="Invalid date format. Use YYYY-MM-DD.")
+    
+    diaries = list(diary_collection.find(query, {"_id": 0}))
     if not diaries:
         return []
     return diaries
