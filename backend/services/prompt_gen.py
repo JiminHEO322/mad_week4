@@ -42,7 +42,15 @@ def mood_extraction(message: str, top_n: int = 3):
 
 def keyword_extraction(message: str, top_n: int = 5, diversity: float = 0.7):
     kw_model = KeyBERT()
-    keywords = kw_model.extract_keywords(
+    single_word_keywords = kw_model.extract_keywords(
+        message,
+        keyphrase_ngram_range=(1, 1),  # 단일 단어만 추출
+        stop_words='english',
+        top_n=1,  # 가장 상위 한 단어만 추출
+        use_maxsum=False,  # 간단한 추출
+        use_mmr=False
+    )
+    combined_keywords = kw_model.extract_keywords(
         message,
         keyphrase_ngram_range=(1, 2),  # 1~2개의 단어 조합 허용
         stop_words='english',
@@ -51,4 +59,9 @@ def keyword_extraction(message: str, top_n: int = 5, diversity: float = 0.7):
         use_mmr=True,
         diversity=diversity  # 다양성을 조정
     )
-    return [kw[0] for kw in keywords]
+    
+    final_keywords = [single_word_keywords[0][0]] if single_word_keywords else []
+    final_keywords += [kw[0] for kw in combined_keywords]
+    
+    # 중복 제거
+    return list(dict.fromkeys(final_keywords))

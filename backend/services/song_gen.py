@@ -6,18 +6,22 @@ load_dotenv()
 LASTFM_API_KEY = os.getenv('LASTFM_API_KEY')
 LASTFM_API_URL = 'http://ws.audioscrobbler.com/2.0/'
 
-def recommend_song(mood: str, keyword: str = None, limit: int = 3):
+def recommend_song(mood: str, keyword: str, limit: int = 3):
+    """
+    Last.fm API를 사용하여 노래를 추천합니다.
+    mood: 감정 (str, 단일 값)
+    keyword: 키워드 (str, 단일 값)
+    limit: 반환할 곡의 수 (기본값 3)
+    """
     recommend_list = []
-    
-    # 태그 구성: 감정 + 키워드 조합
-    if keyword:
-        search_tag = f"{mood},{keyword}"  # 예: "happy,rain"
-    else:
-        search_tag = mood
-        
+
+    # 태그 생성
+    tag = f"{mood}"  # 감정과 키워드를 쉼표로 연결
+    print(f"노래 추천 태그: {tag}")
+
     params = {
         'method': 'tag.gettoptracks',
-        'tag': search_tag,
+        'tag': tag,
         'api_key': LASTFM_API_KEY,
         'format': 'json',
         'limit': limit
@@ -27,11 +31,17 @@ def recommend_song(mood: str, keyword: str = None, limit: int = 3):
 
     if response.status_code == 200:
         data = response.json()
-        for track in data['tracks']['track']:
-            recommend_list.append({
-                'title': track['name'],
-                'artist': track['artist']['name']
-            })
-        return recommend_list
+        if 'tracks' in data and 'track' in data['tracks']:
+            for track in data['tracks']['track']:
+                recommend_list.append({
+                    'title': track['name'],
+                    'artist': track['artist']['name']
+                })
     else:
-        print("오류 발생:", response.status_code)
+        print(f"API 호출 실패: {response.status_code}, {response.text}")
+
+    if not recommend_list:
+        print("추천 결과가 없습니다.")
+        return [{"title": "No recommendations available", "artist": "Unknown"}]
+    
+    return recommend_list

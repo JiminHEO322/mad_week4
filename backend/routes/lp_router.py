@@ -55,15 +55,13 @@ def generate_diary(request: DiaryRequest):
     '''LP 커버 생성 및 노래 추천'''
     translated_text = english_translation(request.text)
     print(f"Translated text: {translated_text}")
+    
     mood = mood_extraction(translated_text)
-    print(f"Detected mood: {mood}")
-    if isinstance(mood, list):
-        mood_prompt = ", ".join([emo["label"] for emo in mood])
-    else:
-        mood_prompt = mood
-        print(f"Detected mood: {mood}")
     keyword = keyword_extraction(translated_text)
+    print(f"Detected mood: {mood}")
     print(f"Detected keyword: {keyword}")
+    mood_prompt = ", ".join([emo["label"] for emo in mood])
+    
 
     if mood == "unknown":
         prompt = f"artistic vinyl record cover, inspired by the theme of {', '.join(keyword)}, without any vinyl disc, record player, or turntable"
@@ -89,12 +87,16 @@ def generate_diary(request: DiaryRequest):
         print(f"Image saved at: {file_path}")
     else:
         print("Image generation failed.")
-    
-    if mood == "unknown":
-        recommended_songs = recommend_song(keyword)
-    else:
-        recommended_songs = recommend_song(mood)
         
+    
+    # 노래 추천
+    # 감정과 키워드 리스트에서 첫 번째 요소를 선택
+    primary_mood = mood[0]["label"] if isinstance(mood, list) and mood else "happy"
+    primary_keyword = keyword[0] if keyword else "sky"
+
+    # 노래 추천 호출
+    recommended_songs = recommend_song(primary_mood, primary_keyword)
+
     print(f"Recommended songs: {recommended_songs}")
 
     # MongoDB에 저장할 데이터
