@@ -5,7 +5,7 @@ from fastapi import APIRouter, HTTPException
 from fastapi.responses import JSONResponse
 from database import diary_collection
 from models import LP, Song
-from diary_schema import DiaryRequest
+from diary_schema import DiaryRequest, SongSelectRequest
 from typing import Optional
 
 from services.image_gen import generate_image
@@ -91,38 +91,39 @@ def generate_diary(request: DiaryRequest):
         
     print(f"Recommended songs: {recommended_songs}")
 
-    if not recommended_songs:
-        song_list = [Song(title="No Title", artist="Unknown")]
-    else:
-        song_list = [Song(title=title, artist=artist) for title, artist in recommended_songs.items()]
-
     # MongoDB에 저장할 데이터
     diary = LP(
         user_id=request.user_id,
         text=request.text,
         created_at=datetime.utcnow(),
-        image=base64_image,
-        song=song_list
+        image=base64_image
     )
     
     # MongoDB 저장
     result = diary_collection.insert_one(diary.dict())
-    return diary
+    # 저장된 데이터를 다시 조회 (id로 검색)
+    saved_diary = diary_collection.find_one({"_id": result.inserted_id})
+
+    # JSON 직렬화를 위해 ObjectId를 문자열로 변환
+    saved_diary["_id"] = str(saved_diary["_id"])
+
+    return {"diary": saved_diary,
+            "song": recommended_songs}
 
 
 @router.post("/select-song")
-def select_song(user_id: str, diary_id: str, song: Song):
+def select_song(request: SongSelectRequest):
     '''LP에 음악 추가'''
-    diary = diary_collection.find_one({"_id": ObjectId(diary_id), "user_id": user_id})
+    diary = diary_collection.find_one({"_id": ObjectId(request.diary_id), "user_id": request.user_id})
     if not diary:
         raise HTTPException(status_code=404, detail="LP not found")
     
     # 음악 정보 추가
     diary_collection.update_one(
-        {"_id": ObjectId(diary_id)},
-        {"$set": {"song": song.dict()}} 
+        diary,
+        {"$set": {"song": request.song.dict()}} 
     )
-    return {"message": "Song added to LP successfully"}
+    return {"message": "Song added to LP successfully", "song": request.song.dict()}
 
 @router.get("/download")
 def download_diary(user_id: str, diary_id: str):
