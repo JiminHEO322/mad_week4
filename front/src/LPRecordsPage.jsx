@@ -8,7 +8,7 @@ import './CustomCalendar.css';
 
 const LPRecordsPage = () => {
   const [lpRecords, setLpRecords] = useState([]);
-  const [filteredLPRecords, setFilteredLPRecords] = useState([]); 
+  const [originalRecords, setOriginalRecords] = useState([]);
   const [selectedLP, setSelectedLP] = useState(null);
   const [isDetailView, setIsDetailView] = useState(false);
   const [selectedDate, setSelectedDate] = useState(new Date());
@@ -26,7 +26,7 @@ const LPRecordsPage = () => {
           alert('LP 기록이 없습니다.');
         } else {
           setLpRecords(response.data);
-          setFilteredLPRecords(response.data);
+          setOriginalRecords(response.data);
         }
       } catch (error) {
         console.error('Error fetching LP records:', error);
@@ -53,12 +53,36 @@ const LPRecordsPage = () => {
       console.log("Server Response:", response.data);
       if (response.data.length === 0) {
         console.log(`No LP records found for ${formattedDate}`); // 디버깅: 해당 날짜 데이터 없음
+        setLpRecords([]);
       }
       setLpRecords(response.data); // 필터링된 LP 목록 저장
     } catch (error) {
       console.error('Error fetching LP records for selected date:', error);
       alert('선택한 날짜의 LP 기록을 불러오는 데 실패했습니다.');
     }
+  };
+
+  // All 클릭 핸들러
+  const handleShowAll = () => {
+    console.log('전체 보기 클릭');
+    setSelectedDate(new Date());
+    setLpRecords(originalRecords);
+  };
+
+  // Date 클릭 핸들러
+  const handleSortByDate = () => {
+    console.log('날짜별 클릭');
+    setSelectedDate(new Date());
+    const sortedRecords = [...originalRecords].sort((a, b) => 
+      new Date(b.created_at) - new Date(a.created_at)
+    );
+    setLpRecords(sortedRecords);
+  };
+
+  // Star 클릭 핸들러 (즐겨찾기 기능 구현 전)
+  const handleShowFavorites = () => {
+    console.log('즐겨찾기 클릭');
+    alert('즐겨찾기 기능은 아직 구현되지 않았습니다!');
   };
 
   // LP 클릭 핸들러
@@ -105,7 +129,30 @@ const LPRecordsPage = () => {
               }
               onChange={handleDateChange}
             />
+            <div className="sort-icons">
+            <img
+              src="./images/All.png"
+              alt="Show All"
+              onClick={handleShowAll}
+            />
+            <img
+              src="./images/Date.png"
+              alt="Sort by Date"
+              onClick={handleSortByDate}
+            />
+            <img
+              src="./images/Star.png"
+              alt="Show Favorites"
+              onClick={handleShowFavorites}
+            />
           </div>
+          </div>
+          <img
+            className="home-cat-icon"
+            src='./images/HomeCat.png' /* 이미지 경로 */
+            alt="Home Icon"
+            onClick={() => navigate("/")} /* 클릭 시 홈으로 이동 */
+          />
         </div>
         
       ) : (

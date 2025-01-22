@@ -28,4 +28,19 @@
     transform: scale(1.1);
     background-color: #555;
   }
+
+  .home-cat-icon {
+    position: fixed; /* 화면의 고정 위치에 배치 */
+    bottom: 20px; /* 화면 아래에서 20px 떨어짐 */
+    right: 20px; /* 화면 오른쪽에서 20px 떨어짐 */
+    width: 60px; /* 아이콘 크기 */
+    height: 60px;
+    cursor: pointer; /* 클릭 가능 커서 */
+    z-index: 1000; /* 다른 요소 위에 배치 */
+  }
+  
+  .home-cat-icon:hover {
+    transform: scale(1.1); /* 마우스 오버 시 확대 효과 */
+    transition: transform 0.2s ease;
+  }
   
