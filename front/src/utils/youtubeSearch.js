@@ -11,7 +11,7 @@ const BASE_URL = 'https://www.googleapis.com/youtube/v3/search';
 //  */
 export async function searchYouTubeVideo(title, artist) {
   try {
-    const query = `${title} ${artist} official music video`;
+    const query = `${title} ${artist} 가사`;
     const response = await axios.get(BASE_URL, {
       params: {
         part: 'snippet',

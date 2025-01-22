@@ -17,5 +17,6 @@ class LP(BaseModel):
     user_id: str
     text: str
     created_at: datetime = Field(default_factory=datetime.utcnow)
+    favorite: Optional[bool] = False
     image: Optional[str]
     song: Optional[Song] = None
