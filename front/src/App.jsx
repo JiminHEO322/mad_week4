@@ -11,6 +11,7 @@ import SongSelectionModal from './SongSelectionModal';
 import { searchYouTubeVideo } from './utils/youtubeSearch';
 import YouTubePlayer from './YouTubePlayer';
 
+
 const CLIENT_ID = import.meta.env.VITE_YW_GOOGLE_CLIENT_ID;
 console.log('Client ID:', CLIENT_ID);
 
@@ -32,6 +33,17 @@ function AppContent() {
   const [showModal, setShowModal] = useState(false);
   const [showSongSelectionModal, setShowSongSelectionModal] = useState(false);
   const [isLoading, setIsLoading] = useState(false)
+  const [loginMessage, setLoginMessage] = useState("");
+  const [loadingStage, setLoadingStage] = useState(0); // 진행 단계
+  const loadingSteps = [
+      "글을 분석 중입니다.",
+      "글에서 감정과 키워드를 추출하고 있습니다.",
+      "LP 표지를 생성하고 있습니다.",
+      "알맞는 노래를 검색 중입니다.",
+  ];
+
+const specialChars = ["♤", "♧", "†", "£", "¢"];
+const [specialCharIndex, setSpecialCharIndex] = useState(0);
   const [userId, setUserId] = useState(() => {
     const savedUserId = localStorage.getItem('userId');
     return savedUserId || null;
@@ -74,28 +86,29 @@ function AppContent() {
     }
   }, [isLoggedIn]);
 
+  useEffect(() => {
+    if (isLoading) {
+        const interval = setInterval(() => {
+            setSpecialCharIndex((prev) => (prev + 1) % specialChars.length);
+        }, 500); // 0.5초마다 변경
+        return () => clearInterval(interval);
+    }
+  }, [isLoading]);
+
 
   const handleSaveDiary = async (diaryText) => {
-    if (!isLoggedIn) {
-      alert("고양이를 눌러서 로그인해주세요!");
-      return;
-    }
-
     if (!diaryText.trim()) {
       alert("일기 내용을 입력해주세요.");
       return;
     }
 
     setIsLoading(true);
-
-
-    console.log('Request Payload:', {
-      user_id: userId,
-      text: diaryText
-    });
-
+    setSpecialCharIndex(0);
+    setLoadingStage(0);
 
     try {
+      setLoadingStage(1);
+
       const response = await axios.post('http://localhost:8000/lps/generate', {
         user_id: userId,
         text: diaryText,
@@ -105,16 +118,19 @@ function AppContent() {
         },
       });
       console.log("Generated LP:", response);
+      setLoadingStage(2);
+      await new Promise(resolve => setTimeout(resolve, 1500)); // 1초 대기
 
       setSelectedLP(response.data.diary);
       localStorage.setItem('selectedLP', JSON.stringify(response.data));
       console.log("SET Selected LP:", selectedLP);
       setRecommendedSongs(response.data.song);
+      setLoadingStage(3);
+      await new Promise(resolve => setTimeout(resolve, 1500)); // 1초 대기
 
-      alert("LP 커버가 성공적으로 생성되었습니다!");
       setShowModal(false);
-
       setShowSongSelectionModal(true);
+
     } catch (error) {
       console.error("Error:", error.response?.data || error.message);
       alert("LP 커버 생성에 실패했습니다.");
@@ -269,7 +285,8 @@ function AppContent() {
 
   const handleRecordClick = () => {
     if(!isLoggedIn){
-      alert("고양이를 눌러서 로그인을 해주세요!");
+      setLoginMessage("고양이를 눌러서 로그인을 해주세요!");
+      setTimeout(() => setLoginMessage(""), 5000);
       return;
     }else{
       navigate('/lp-records'); 
@@ -278,7 +295,9 @@ function AppContent() {
 
   const handleTableClick = () => {
     if(!isLoggedIn){
-      alert("고양이를 눌러서 로그인을 해주세요!");
+      setLoginMessage("고양이를 눌러서 로그인을 해주세요!");
+      console.log("로그인해랴", loginMessage)
+      setTimeout(() => setLoginMessage(""), 5000);
       return;
     }else{
       setShowModal(true)
@@ -299,6 +318,24 @@ function AppContent() {
       handleGoogleLogin(); // 로그인 처리
     }
   };
+
+  const handlePlayVideo = (videoId) => {
+    console.log(`handlePlayVideo 호출됨, videoId: ${videoId}`);
+
+    if (youTubePlayer) {
+      if (videoId === null) {
+        console.log("비디오 정지 요청됨");
+        youTubePlayer.pauseVideo();
+      } else {
+        console.log(`비디오 로드 및 재생: ${videoId}`);
+        setYouTubeVideoId(videoId);
+        youTubePlayer.loadVideoById(videoId);
+        youTubePlayer.playVideo();
+      }
+    }
+  };
+
+  
 
   
 
@@ -327,12 +364,21 @@ function AppContent() {
               setHoveredText={setHoveredText}/>
           </Canvas>
 
-          {isLoading && ( 
-            <div className="loading-overlay">
-              <div className="loading-content">
-                <p>“LP를 생성 중입니다! 잠시만 기다려주세요” ♤ ♧ † £ ¢</p>
+          {loginMessage && (
+              <div className="login-message">
+                  {loginMessage}
               </div>
-            </div>
+          )}
+
+
+          {isLoading && (
+              <div className="loading-overlay">
+                  <div className="loading-content">
+                      <p className="M1">"오늘의 LP를 만들고 있습니다! 잠시만 기다려 주세요:D"</p>
+                      <p className="M2">{specialChars.slice(0, specialCharIndex + 1).join(" ")}</p>
+                      <p className="M3">{loadingSteps[loadingStage]}</p>
+                  </div>
+              </div>
           )}
 
           {!isLoading && (
@@ -348,6 +394,7 @@ function AppContent() {
             recommendedSongs={recommendedSongs}
             onClose={() => setShowSongSelectionModal(false)}
             onSongSelect={handleSongSelect}
+            onPlay={handlePlayVideo}
           />
 
           

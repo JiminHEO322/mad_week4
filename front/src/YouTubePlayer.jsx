@@ -6,7 +6,7 @@ function YouTubePlayer({ videoId, onPlayerReady }) {
     height: '10',
     width: '010',
     playerVars: {
-      autoplay: 0,
+      autoplay: 1,
       controls: 1
     },
   };

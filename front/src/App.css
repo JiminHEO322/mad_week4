@@ -30,7 +30,6 @@ body{
   font-family: 'Ownglyph', sans-serif;
   font-size: 32px;
   text-align: center;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .hovered-text {
@@ -102,4 +101,43 @@ body{
   width: 20%;
   z-index: 100;
   padding: 20px;
+}
+
+.login-message {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: 'Ownglyph', sans-serif; 
+  color: white;
+  padding: 10px 20px;
+  border-radius: 5px;
+  text-align: center;
+  z-index: 1000;
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+.M1 {
+  font-size: 40px;  /* 가장 큰 글씨 */
+  margin-bottom: 100px;
+  font-weight: bold;
+  color: #333;
+}
+
+.M2 {
+  font-size: 35px;
+  font-weight: bold;
+  letter-spacing: 5px;
+  margin-bottom: 100px;
+}
+
+.M3 {
+  font-size: 28px;
+  font-weight: normal;
+  color: #333;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }

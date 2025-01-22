@@ -23,8 +23,8 @@
       font-family: 'Ownglyph';
       background: rgba(255, 255, 255, 0.8);
       padding: 20px;
-      width: 500px;
-      height: 330px;
+      width: 480px;
+      height: 280px;
       border-radius: 10px;
       text-align: center;
       box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -81,4 +81,63 @@
     .close-btn:hover {
       background: #c82333;
     }
+
+    
+    .play-button {
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 18px;
+      padding: 4px 8px;
+    }
+
+    .song-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 30px;
+      border-radius: 8px; 
+      transition: background-color 0.2s ease-in-out;
+    }
+    .song-title, .song-artist, .separator {
+      display: inline; /* 줄바꿈 방지 */
+    }
+    
+    .song-item:hover {
+      background-color: rgba(255, 255, 255, 0.2);
+    }
+    
+    .song-info {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+    }
+    
+    .song-title {
+      font-weight: bold;
+      font-size: 20px;
+      color: #333;
+    }
+    
+    .song-artist {
+      font-size: 17px;
+      color: #666;
+    }
+    
+    .play-button {
+      background: none;
+      border: none;
+      font-size: 20px;
+      cursor: pointer;
+      padding: 8px;
+    }
+
+    .play-button:hover {
+      background-color: rgba(200, 200, 200, 0.7); /* 기존보다 연한 회색 */
+      border-radius: 50%; /* 둥글게 */
+    }
+
+    
     
