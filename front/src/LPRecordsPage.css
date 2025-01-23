@@ -174,7 +174,10 @@
     position: absolute;
     top: 10px; /* 상단에서 10px 떨어진 위치 */
     right: 10px; /* 오른쪽에서 10px 떨어진 위치 */
-    background: rgba(255, 255, 255, 0.8); /* 배경 색상 투명 효과 */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.6); /* 배경 색상 투명 효과 */
     border: none;
     font-size: 24px;
     cursor: pointer;
@@ -183,13 +186,22 @@
     height: 40px;
     text-align: center;
     line-height: 40px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.6);
     transition: all 0.3s ease-in-out;
   }
 
   .favorite-button:hover {
-    background: rgba(255, 255, 255, 1); /* 마우스 오버 시 배경 변경 */
+    background: rgba(255, 255, 255, 0.8); /* 마우스 오버 시 배경 변경 */
     transform: scale(1.1);
+  }
+
+  .favorite-button img {
+    width: 30px;
+    height: 30px;
+    border: none;
+    outline: none;
+    box-shadow: none;
+    background: transparent;
   }
 
   .home-cat-icon {

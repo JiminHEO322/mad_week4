@@ -73,18 +73,18 @@ def generate_diary(request: DiaryRequest):
     image = generate_image(prompt)
     if image:
         # 이미지 저장 경로 설정
-        save_dir = "images"
-        os.makedirs(save_dir, exist_ok=True)  # 디렉토리 없으면 생성
-        file_path = os.path.join(save_dir, f"{keyword}_{mood}.png")
+        # save_dir = "images"
+        # os.makedirs(save_dir, exist_ok=True)  # 디렉토리 없으면 생성
+        # file_path = os.path.join(save_dir, f"{keyword}_{mood}.png")
         
         # Base64로 변환
         base64_image = base64.b64encode(image).decode("utf-8")
 
         # 이미지 파일로 저장
-        with open(file_path, "wb") as f:
-            f.write(image)
+        # with open(file_path, "wb") as f:
+        #     f.write(image)
         
-        print(f"Image saved at: {file_path}")
+        # print(f"Image saved at: {file_path}")
     else:
         print("Image generation failed.")
         
