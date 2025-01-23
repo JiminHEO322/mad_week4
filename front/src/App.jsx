@@ -27,6 +27,7 @@ function App() {
 function AppContent() {
   const [hoveredText, setHoveredText] = useState("");
   const [isAnimating, setIsAnimating] = useState(false);
+  const [isTestingSong, setIsTestingSong] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [showLpSelection, setShowLpSelection] = useState(false);
   const [recommendedSongs, setRecommendedSongs] = useState([]);
@@ -201,9 +202,12 @@ const [specialCharIndex, setSpecialCharIndex] = useState(0);
       console.log("노래 추가됨: ", response)
   
       // 노래 선택 모달 닫기
+      handlePlayVideo(null);
       setShowSongSelectionModal(false);
   
       alert("노래가 LP에 등록되었습니다!");
+      window.location.reload();
+
     } catch (error) {
       console.error("노래 선택 에러:", error);
       alert("노래 선택에 실패했습니다.");
@@ -211,9 +215,7 @@ const [specialCharIndex, setSpecialCharIndex] = useState(0);
   };
 
   const handleStartClick = () => {
-    // 현재 상태 확인 (true = 애니메이션 실행 중, false = 정지 중)
     console.log("Current Animation State:", isAnimating);
-    console.log("Current Player State:", youTubePlayer);
     console.log("-- 재생할 비디오 아이디는: ", youTubeVideoId);
     if (isAnimating) {
       // 애니메이션을 멈춤 → 비디오를 pause
@@ -224,7 +226,7 @@ const [specialCharIndex, setSpecialCharIndex] = useState(0);
     } else {
       // 애니메이션을 시작 → 비디오를 play
       console.log("Playing video & starting animation...");
-      if (youTubePlayer) {
+      if (youTubePlayer && !isTestingSong) {
         youTubePlayer.playVideo();
       }
     }
@@ -252,8 +254,10 @@ const [specialCharIndex, setSpecialCharIndex] = useState(0);
     setYouTubePlayer(player);
     player.setVolume(40);
     if (isAnimating) {
+      console.log('노래 재생 가능');
       player.playVideo();  // LP가 회전 중일 때만 음악 재생
     } else {
+      console.log('노래 재생 불가능');
       player.pauseVideo();  // LP가 멈춰있으면 자동 재생 방지
     }
   };
@@ -340,11 +344,13 @@ const [specialCharIndex, setSpecialCharIndex] = useState(0);
       if (videoId === null) {
         console.log("비디오 정지 요청됨");
         youTubePlayer.pauseVideo();
+        setIsTestingSong(false);
       } else {
         console.log(`비디오 로드 및 재생: ${videoId}`);
         setYouTubeVideoId(videoId);
         youTubePlayer.loadVideoById(videoId);
         youTubePlayer.playVideo();
+        setIsTestingSong(true);
       }
     }
   };

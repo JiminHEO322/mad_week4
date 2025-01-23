@@ -64,9 +64,9 @@ def generate_diary(request: DiaryRequest):
     
 
     if mood == "unknown":
-        prompt = f"artistic vinyl record cover, inspired by the theme of {', '.join(keyword)}, without any vinyl disc, record player, or turntable"
+        prompt = f"artistic vinyl record cover, inspired by the theme of {', '.join(keyword)}"
     else:
-        prompt = f"A {mood_prompt} and artistic illustration for a vinyl record cover, inspired by the theme of {', '.join(keyword)}, focusing on abstract art and minimalistic patterns, without showing any vinyl disc or record player"
+        prompt = f"A {mood_prompt} and artistic illustration for a vinyl record cover, inspired by the theme of {', '.join(keyword)}, focusing on abstract art and minimalistic patterns"
 
     
     # Hugging Face 이미지 생성
