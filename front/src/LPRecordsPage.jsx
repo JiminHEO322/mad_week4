@@ -39,7 +39,6 @@ const LPRecordsPage = () => {
 
   const [lpRecords, setLpRecords] = useState([]);
   const [originalRecords, setOriginalRecords] = useState([]);
-  const [favorites, setFavorites] = useState([]);
   const [selectedLP, setSelectedLP] = useState(null);
   const [isDetailView, setIsDetailView] = useState(false);
   const [selectedDate, setSelectedDate] = useState(new Date());

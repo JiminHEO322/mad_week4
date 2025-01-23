@@ -103,7 +103,7 @@ def generate_diary(request: DiaryRequest):
     diary = LP(
         user_id=request.user_id,
         text=request.text,
-        created_at=datetime.utcnow(),
+        created_at=datetime.now().astimezone().isoformat(),
         image=base64_image
     )
     
