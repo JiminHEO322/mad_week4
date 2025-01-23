@@ -25,7 +25,7 @@ function YouTubePlayer({ videoId, onPlayerReady }) {
   useEffect(() => {
     const vinylNoise = vinylNoiseRef.current;
     vinylNoise.loop = true; // 🔄 LP 소리를 무한 반복
-    vinylNoise.volume = 0.4; // 🔊 기본 볼륨 설정 (0.0 ~ 1.0)
+    vinylNoise.volume = 0.3; // 🔊 기본 볼륨 설정 (0.0 ~ 1.0)
 
     return () => {
       vinylNoise.pause(); // 컴포넌트 언마운트 시 LP 소리 정지

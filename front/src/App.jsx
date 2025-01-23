@@ -253,7 +253,7 @@ const [specialCharIndex, setSpecialCharIndex] = useState(0);
     console.log("handlePlayerReady called:", player);
     setYouTubePlayer(player);
     player.setVolume(40);
-    if (isAnimating) {
+    if (isAnimating || isTestingSong) {
       console.log('노래 재생 가능');
       player.playVideo();  // LP가 회전 중일 때만 음악 재생
     } else {
@@ -339,6 +339,11 @@ const [specialCharIndex, setSpecialCharIndex] = useState(0);
 
   const handlePlayVideo = (videoId) => {
     console.log(`handlePlayVideo 호출됨, videoId: ${videoId}`);
+
+    if (!youTubePlayer) {
+      console.log("YouTubePlayer가 아직 준비되지 않음.");
+      return;
+  }
 
     if (youTubePlayer) {
       if (videoId === null) {
