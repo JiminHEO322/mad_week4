@@ -16,7 +16,7 @@ def recommend_song(mood: str, keyword: str, limit: int = 3):
     recommend_list = []
 
     # 태그 생성
-    tag = f"{mood}"  # 감정과 키워드를 쉼표로 연결
+    tag = f"{keyword}"  # 감정과 키워드를 쉼표로 연결
     print(f"노래 추천 태그: {tag}")
 
     params = {
