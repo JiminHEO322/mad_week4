@@ -32,8 +32,8 @@ const SongSelectionModal = ({ isOpen, onClose, recommendedSongs, onSongSelect, o
       <div className="modal-content1">
         <h2>LP에 넣을 음악을 선택해 주세요!</h2>
         {recommendedSongs.map((song, index) => (
-          <div key={index} className="song-item" onClick={() => onSongSelect(song)}>
-          <div className="song-info">
+          <div key={index} className="song-item" >
+          <div className="song-info" onClick={() => onSongSelect(song)}>
             <span className="song-title">{song.title}</span>
             <span className="song-artist"> by {song.artist}</span>
           </div>
