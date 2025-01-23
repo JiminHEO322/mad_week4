@@ -201,7 +201,10 @@ const LPRecordsPage = () => {
                     className="favorite-button"
                     onClick={(e) => { toggleFavorite(lp, e);
                   }}>
-                    {lp.favorite ? '★' : '☆'}
+                    <img
+                      src={lp.favorite ? '/images/HeartOn.png' : '/images/HeartOff.png'}
+                      alt="Favorite Icon"
+                    />
                   </button>
                 </div>
               ))
