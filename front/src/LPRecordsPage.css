@@ -123,8 +123,36 @@
     width: 100%; /* 부모 크기만큼 맞춤 */
     height: 100%;
     border-radius: 10px;
-    z-index: 2;
+    z-index: 5;
     animation: fade-in 0.5s ease;
+  }
+
+  .download-button {
+    position: absolute;
+    bottom: 10px;  /* 우하단 정렬 */
+    right: 10px;   /* 우하단 정렬 */
+    width: 35px;
+    height: 35px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.6); /* 배경 색상 투명 효과 */
+    z-index: 1000;
+    border: none;
+    border-radius: 30%;
+    cursor: pointer;
+    pointer-events: auto;
+  }
+
+  .download-button:hover {
+    background: rgba(255, 255, 255, 0.8); /* 마우스 오버 시 배경 변경 */
+    transform: scale(1.05);
+  }
+
+  .download-button img {
+    max-width: 90%;  /* 부모 요소 크기에 맞추기 */
+    max-height: 90%;
+    object-fit: contain;  /* 이미지 비율 유지 및 잘림 방지 */
   }
   
   .lp-disk {
@@ -135,6 +163,7 @@
     background-size: cover;
     position: absolute;
     top: 50%;
+    z-index: 1;
     animation: spin 2s linear infinite;
   }
   

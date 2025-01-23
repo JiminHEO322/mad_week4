@@ -181,6 +181,15 @@ const LPRecordsPage = () => {
     navigate(`/`, { state: { selectedLP: record } });
   };
 
+  const downloadImage = (base64Data, filename) => {
+    const link = document.createElement('a');
+    link.href = `data:image/png;base64,${base64Data}`;
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }; 
+
 
   return (
     <div className="lp-page">
@@ -256,8 +265,14 @@ const LPRecordsPage = () => {
           <div className="lp-detail-container" onClick={(e) => e.stopPropagation()}>
             <div className="lp-cover-layout">
               <div className="lp-cover-detail">
-                <img src={`data:image/png;base64,${selectedLP.image}`} alt="LP Cover" />
                 <div className="lp-disk"></div>
+                <img src={`data:image/png;base64,${selectedLP.image}`} alt="LP Cover" />
+                <button 
+                  className="download-button"
+                  onClick={() => downloadImage(selectedLP.image, '오늘의 LP.png')}
+                >
+                  <img src={'/images/download_black.png'} alt="Download Icon" />
+                </button>
               </div>
             </div>
             <div className="lp-info">
